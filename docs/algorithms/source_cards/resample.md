@@ -1,0 +1,61 @@
+# ReSample
+
+
+## 1. 算法身份
+
+- **名称**：ReSample；注册名 `resample`
+- **一句话简介**：潜空间 DDIM 中做硬数据一致性优化并随机重采样。
+- **所属任务**：CT：二维平行束（同步辐射）、二维扇束（实验室锥束中心层）
+- **方法类型**：学习类（使用预训练模型）
+- **适用范围**：适用于与预训练先验同网格（像素模型 512²、潜空间模型 512² 图像）的二维 CT，任意提供正投影与伴随的线性几何（平行束、扇束）；先验在 LoDoInd 工业 CT 切片上训练，跨数据域需要重新训练或微调。不支持三维体数据；所有结果保持模型域 [-1, 1] 的尺度约定。
+- **对应论文**：Song et al., Solving Inverse Problems with Latent Diffusion Models via Hard Data Consistency, ICLR 2024（arXiv:2307.08123）
+- **代码来源**：改编自 DM4CT（https://github.com/DM4CT/DM4CT ，commit 49b3e59，pipelines.py / condition_methods.py）；预训练权重 jiayangshi/lodoind_*_diffusion（MIT）
+
+## 2. 输入输出
+
+示例数据位于 `examples/ct_data/`，字段、单位与许可见 [数据说明](../../../examples/ct_data/README.md)。每个数据包包含真值 `image`、投影 `sinogram`、角度 `theta`（弧度）、有测量的探测器列 `det_mask`与几何参数：
+
+| 文件 | 几何 | 内容 | 预处理 |
+| --- | --- | --- | --- |
+| `toy_lodoind_512.npz` | 二维平行束（同步辐射） | LoDoInd 测试切片 2750（工业 CT），40 个角度（0–180°）稀疏角，无噪声（DM4CT 设置）。`image` 512×512，`sinogram` 40×512（角度×探测器） | DM4CT `preprocess_lodoind.py`（百分位截断、映射到 [-1, 1]、缩放到 512²）后取 `(x + 1) / 2` |
+| `toy_lodoind_fan_512.npz` | 二维扇束（实验室锥束中心层，ASTRA） | 同一 LoDoInd 切片，实验室扇束 80 个角度（0–360°），SOD 1024、SDD 1536，576 个探测器，无噪声。`image` 512×512，`sinogram` 80×576（角度×探测器） | 同上；`sinogram` 由 ASTRA 扇束正投影生成 |
+
+公共 runner 在 `--output` 目录生成物理域 `reconstruction.npy` 和 `result.json`，后者包含实际参数、耗时、指标、诊断及输出清单。二维输出包含 batch、channel 轴，三维包含 batch 轴。
+
+**正常结果**（推荐默认参数、种子 0；CPU 行为服务器 CPU，GPU 行为 NVIDIA A100-SXM4-80GB）：
+
+| 数据 | 输出尺寸 | PSNR (dB) | SSIM | ROI PSNR (dB) | 测量相对残差 | 耗时 (s) | 设备 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `toy_lodoind_512.npz` | 512×512 | 19.89 | 0.467 | — | 0.0594 | 1889.7 | cuda |
+| `toy_lodoind_fan_512.npz` | 512×512 | 8.50 | 0.210 | — | 0.2546 | 2619.9 | cuda |
+
+PSNR/SSIM 以数据包真值的极差为动态范围；截断（内部断层）数据另给中心视场圆内的 ROI 指标。表中数值及来源的 1 dB 容差属于来源记录，本项目的当前验证见 CT 验证文档。
+
+说明：DM4CT 默认参数在扇束数据上发散（toy 上约 8.5 dB，图像四角位于视场外），需要针对扇束另行调参；平行束结果正常。单次运行约 30–45 分钟，本次未调参。
+
+## 3. 运行方式
+
+```bash
+pip install -e ".[diffusion]"
+conda install -c astra-toolbox astra-toolbox=2.4   # 三维平行束、扇束、锥束数据需要
+python tools/download_deep_weights.py lodoind-latent
+python -m examples.run_deep_ct --algorithm resample --input examples/ct_data/toy_lodoind_512.npz --output outputs/resample/toy_lodoind_512 --weights weights/lodoind_latent_diffusion --device cuda
+python -m examples.run_deep_ct --algorithm resample --input examples/ct_data/toy_lodoind_fan_512.npz --output outputs/resample/toy_lodoind_fan_512 --weights weights/lodoind_latent_diffusion --device cuda
+```
+
+- 设备：需要 CUDA GPU。三维平行束、扇束与锥束数据使用 ASTRA CUDA 投影器，需要 GPU 与 astra-toolbox；`tomopy_cuda` 数据首次运行会用 ninja 编译 CUDA 扩展（需 `CUDA_HOME`）。
+- 测试环境：Python 3.10、PyTorch 2.7.0+cu118、diffusers 0.32.2、astra-toolbox 2.4.0。
+- 权重：DM4CT 在 LoDoInd 上训练的潜空间模型（`unet/`、`vqvae/`、`scheduler/`，676 MB，MIT，固定版本 jiayangshi/lodoind_latent_diffusion@6f35a9b），下载到 `weights/lodoind_latent_diffusion/`。
+- 权重与数据的约定：VQ 解码后的图像为 512²、[-1, 1]；测量换算同像素模型（`image_scale=0.5`、`image_offset=0.5`）。潜变量初始噪声在 CPU 上生成。
+- 参数通过 `--params` 传入 JSON 对象，例如 `--params '{"seed": 0}'`。能力及默认值通过 `inv_framework.ct.api.list_capabilities()` 查询。
+
+## 4. 参数
+
+| 参数名 | 作用 | 默认值 | 默认值来源 | 允许值或必要约束 | 推荐范围（可选） |
+| --- | --- | --- | --- | --- | --- |
+| `num_inference_steps` | DDIM 采样步数 | `200` | DM4CT 原实验脚本（reverse_sample_*_ct.py，commit 49b3e59） | 正整数 |  |
+| `pixel_lr` | 像素域一致性优化学习率 | `1e-4` | DM4CT 原实验脚本（reverse_sample_*_ct.py，commit 49b3e59） | 正实数 |  |
+| `latent_lr` | 潜空间一致性优化学习率 | `0.1` | DM4CT 原实验脚本（reverse_sample_*_ct.py，commit 49b3e59） | 正实数 |  |
+| `inter_timesteps` | 两次硬一致性之间的步数间隔 | `5` | ReSample 原实现默认值 | 正整数 |  |
+| `pixel_maxiters` | 像素域优化最大迭代 | `2000` | ReSample 原实现默认值 | 正整数 |  |
+| `latent_maxiters` | 潜空间优化最大迭代 | `500` | ReSample 原实现默认值 | 正整数 |  |

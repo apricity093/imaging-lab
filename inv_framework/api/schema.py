@@ -11,7 +11,7 @@ from pathlib import Path
 class CTTaskRequest:
     case_id: str
     algorithm: str
-    backend: Literal["torch", "astra", "leap"] = "torch"
+    backend: Literal["torch", "astra", "leap", "nasn"] = "torch"
     device: str | None = None
     data_root: str | None = None
     fit_view_indices: list[int] | None = None
@@ -58,7 +58,7 @@ def normalize_request(request):
     name = ALGORITHM_ALIASES.get(request.algorithm, request.algorithm)
     if name not in SOLVER_SPECS:
         raise ConfigError(f"unknown algorithm: {name}")
-    if request.backend not in {"torch", "astra", "leap"}:
+    if request.backend not in {"torch", "astra", "leap", "nasn"}:
         raise ConfigError(f"unknown backend: {request.backend}")
     if not isinstance(request.params, dict):
         raise ConfigError("params must be a flat dict")
@@ -148,6 +148,16 @@ def normalize_request(request):
     return request, name, validation.parameters
 
 
+def request_device(request, name):
+    """Resolve external geometry device before loading observation arrays."""
+    inputs = request.inputs if isinstance(request.inputs, dict) else {}
+    geometry = inputs.get('geometry', {})
+    cuda = (name == 'fdk' or request.backend == 'nasn'
+            or (isinstance(geometry, dict)
+                and geometry.get('type') in {'fan_2d', 'parallel_3d', 'cone_3d'}))
+    return request.device or ('cuda' if cuda else 'cpu')
+
+
 def validate_ct_request(request):
     """Validate public parameters, geometry and measurement compatibility without solving.
 
@@ -155,7 +165,7 @@ def validate_ct_request(request):
     """
     from . import execution
     request, name, parameters = normalize_request(request)
-    device = request.device or ("cuda" if name == "fdk" else "cpu")
+    device = request_device(request, name)
     case = load_request_case(request, device)
     if request.fit_view_indices is not None:
         if set(request.fit_view_indices) & set(request.heldout_view_indices):
@@ -193,9 +203,9 @@ def load_request_case(request, device):
     geometry = inputs["geometry"]
     if not isinstance(geometry, dict) or not {"type", "domain_shape", "range_shape", "angles_rad"} <= geometry.keys():
         raise ValueError("geometry requires type, domain_shape, range_shape and angles_rad")
-    if geometry["type"] not in {"parallel_2d", "cone_3d"}:
+    if geometry["type"] not in {"parallel_2d", "fan_2d", "parallel_3d", "cone_3d"}:
         raise ValueError("unsupported CT geometry type")
-    metadata = {"dimension": 3 if geometry["type"] == "cone_3d" else 2,
+    metadata = {"dimension": 3 if geometry["type"] in {"cone_3d", "parallel_3d"} else 2,
                 "measurement": inputs["measurement"]}
     if "truth" in inputs:
         if inputs.get("data_range", 0) <= 0:

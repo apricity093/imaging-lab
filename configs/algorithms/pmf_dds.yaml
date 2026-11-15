@@ -1,0 +1,12 @@
+schema_version: 1
+name: pmf_dds
+parameters:
+  num_inference_steps: 16
+  dc_lam: 5.0
+  dc_iter: 10
+  eta: 0.0
+  omega: 1.0
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

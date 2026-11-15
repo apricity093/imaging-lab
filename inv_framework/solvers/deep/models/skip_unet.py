@@ -1,5 +1,4 @@
-"""solvers deep models skip_unet implementation."""
-from __future__ import annotations
+"""Lightweight U-Net with skip connections for Deep Image Prior."""
 
 import torch
 import torch.nn as nn

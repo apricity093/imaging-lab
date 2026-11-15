@@ -7,7 +7,7 @@
 - **所属任务**：反卷积。
 - **方法类型**：非学习类，无需训练权重。
 - **适用范围**：二维灰度或末轴多通道、周期模型；输入核支持，不提供真核。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/deconvolution/blind.py](../../inv_framework/deconvolution/blind.py)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/deconvolution/blind.py](../../inv_framework/deconvolution/blind.py)。
 
 ### 领域入口与目标
 

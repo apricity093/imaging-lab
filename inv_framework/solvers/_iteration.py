@@ -450,6 +450,9 @@ def _landweber_step_preflight(
     step_size: Any,
 ) -> tuple[float, float, list[str], dict[str, Any]]:
     errors: list[str] = []
+    automatic = step_size is None
+    if automatic:
+        step_size = 1.0
     if isinstance(step_size, bool) or not isinstance(step_size, (int, float)):
         errors.append("step_size must be a finite positive number")
         return 0.0, float("nan"), errors, {}
@@ -460,7 +463,7 @@ def _landweber_step_preflight(
     norm_squared = _known_operator_norm_squared(control)
     estimates: dict[str, Any] = {}
     if norm_squared is None:
-        power_iterations = dict(control.metadata or {}).get("power_iterations", 8)
+        power_iterations = dict(control.metadata or {}).get("power_iterations", 12)
         try:
             power_iterations = int(power_iterations)
         except (TypeError, ValueError):
@@ -479,6 +482,8 @@ def _landweber_step_preflight(
             "operator_norm_squared": norm_squared,
             "operator_norm_estimator": "control_metadata",
         })
+    if automatic:
+        step = 0.9 / norm_squared if norm_squared > 0 else 1.0
     if not _finite_scalar(norm_squared) or norm_squared < 0.0:
         errors.append("operator norm estimate must be finite and nonnegative")
     elif norm_squared > 0.0:

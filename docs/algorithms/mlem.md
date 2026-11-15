@@ -7,7 +7,7 @@
 - **所属任务**：CT。
 - **方法类型**：非学习类，无需训练权重。
 - **适用范围**：OSEM 是有序子集变体。发射计数与 X-ray 透射计数是不同模型，不对透射数据套用该更新。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/solvers/statistical.py](../../inv_framework/solvers/statistical.py)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/solvers/statistical.py](../../inv_framework/solvers/statistical.py)。
 
 ### 领域入口与目标
 

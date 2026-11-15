@@ -1,0 +1,101 @@
+# Mask acts in forward and adjoint. Zero observations do not declare missing columns.
+modality: ct
+task_type: reconstruction
+algorithm: sirt
+backend: torch
+device: cpu
+inputs:
+  observation:
+    path: data/projections.npy
+model:
+  geometry:
+    type: parallel_2d
+    domain_shape:
+    - 1
+    - 64
+    - 64
+    range_shape:
+    - 1
+    - 8
+    - 64
+    angles_rad:
+    - 0.0
+    - 0.3926990817
+    - 0.7853981634
+    - 1.1780972451
+    - 1.5707963268
+    - 1.9634954085
+    - 2.3561944902
+    - 2.7488935719
+    detector_mask:
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - true
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+    - false
+  measurement:
+    noise_model: gaussian
+    observation_model: gaussian
+    observation_domain: line_integral
+params:
+  num_iterations: 2
+  min_value: 0.0

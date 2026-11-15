@@ -475,6 +475,14 @@ class ParameterSpec:
             if not isinstance(value, bool):
                 raise ValueError(f"parameter {self.name} must be a bool")
             normalized = value
+        elif self.type in {"int_array", "subset_schedule"}:
+            rows = value if self.type == "subset_schedule" else [value]
+            if not isinstance(value, list) or not value or any(
+                not isinstance(row, list) or not row or any(type(i) is not int or i < 0 for i in row)
+                for row in rows
+            ):
+                raise ValueError(f"parameter {self.name} requires nonempty nonnegative integer arrays")
+            normalized = value
         elif self.type == "str":
             if not isinstance(value, str):
                 raise ValueError(f"parameter {self.name} must be a string")
@@ -505,6 +513,11 @@ class ParameterSpec:
         record = _jsonable(asdict(self))
         record["canonical_name"] = self.name
         record["serialization_name"] = self.serialization_name or self.name
+        if self.type in {"int_array", "subset_schedule"}:
+            item = {"type": "integer", "minimum": 0}
+            if self.type == "subset_schedule":
+                item = {"type": "array", "minItems": 1, "items": item}
+            record["schema"] = {"type": "array", "minItems": 1, "items": item}
         record["hard_constraints"] = {
             "minimum": self.minimum,
             "maximum": self.maximum,
@@ -1011,6 +1024,8 @@ def _quadratic_parameters(method):
         _p('boundary','str',default='neumann',choices=('neumann','periodic')),
         _p('tolerance',default=None if method in ('cgls','lsqr') else 1e-6,
            nullable=method in ('cgls','lsqr'),minimum=0.),)
+    if method=='cg':
+        parameters += (_p('lam_rel', default=None, nullable=True, minimum=0., description='Relative identity weight; lambda=lam_rel times estimated squared operator norm.'),)
     if method=='landweber':
         parameters += (_p('step_size',default=None,nullable=True,minimum=0.,inclusive_minimum=False,
             theoretical_constraint='0 < alpha * augmented_squared_norm_bound < 2'),)
@@ -1034,7 +1049,7 @@ def _composition_parameters(method):
 
 SOLVER_SPECS: dict[str, CTAlgorithmSpec] = {
     "fbp": _algorithm(
-        "fbp", "FBP", (2,), ("parallel_2d",), "Filtered backprojection.",
+        "fbp", "FBP", (2, 3), ("parallel_2d", "fan_2d", "parallel_3d"), "Filtered backprojection.",
         (_p("scale", default=None, nullable=True, minimum=0.0, inclusive_minimum=False, description="Optional analytic scale."),),
         family="analytical", objective="filtered_backprojection", sparse_view=False,
         limited_angle=True, cost="one_adjoint_plus_filter", direct=True,
@@ -1042,13 +1057,13 @@ SOLVER_SPECS: dict[str, CTAlgorithmSpec] = {
         convergence_criteria=("non_iterative_completion",),
     ),
     "sirt": _algorithm(
-        "sirt", "SIRT", (2,), ("parallel_2d",), "Simultaneous iterative reconstruction.",
+        "sirt", "SIRT", (2, 3), ("parallel_2d", "fan_2d", "parallel_3d", "cone_3d"), "Simultaneous iterative reconstruction.",
         _COMMON, sparse_view=True, limited_angle=True,
         failure_modes=("slow_convergence", "over_smoothing"),
         convergence_criteria=("normalized_residual", "relative_iterate_change"),
     ),
     "landweber": _algorithm(
-        "landweber", "Landweber", (2,), ("parallel_2d",),
+        "landweber", "Landweber", (2, 3), ("parallel_2d", "fan_2d", "parallel_3d", "cone_3d"),
         "Augmented quadratic gradient iteration; bounded legacy path is projected L2.", _quadratic_parameters("landweber"),
         regularizers=('none', 'tikhonov', 'h1'),
         metadata={'data_fidelity':('l2','gaussian_nll','wls'), 'constraints':('unconstrained',)},
@@ -1057,7 +1072,7 @@ SOLVER_SPECS: dict[str, CTAlgorithmSpec] = {
         convergence_criteria=('normalized_normal_residual', 'data_residual'),
     ),
     "cgls": _algorithm(
-        "cgls", "CGLS", (2,), ("parallel_2d",),
+        "cgls", "CGLS", (2, 3), ("parallel_2d", "fan_2d", "parallel_3d", "cone_3d"),
         "Augmented forward/adjoint conjugate-gradient least squares.", _quadratic_parameters("cgls"),
         regularizers=('none', 'tikhonov', 'h1'),
         metadata={'data_fidelity':('l2','gaussian_nll','wls'), 'constraints':('unconstrained',)},
@@ -1066,7 +1081,7 @@ SOLVER_SPECS: dict[str, CTAlgorithmSpec] = {
         convergence_criteria=('normalized_normal_residual', 'data_residual'),
     ),
     "lsqr": _algorithm(
-        "lsqr", "LSQR", (2,), ("parallel_2d",),
+        "lsqr", "LSQR", (2, 3), ("parallel_2d", "fan_2d", "parallel_3d", "cone_3d"),
         "Augmented real or complex Golub-Kahan bidiagonalization.", _quadratic_parameters("lsqr"),
         regularizers=('none', 'tikhonov', 'h1'),
         metadata={'data_fidelity':('l2','gaussian_nll','wls'), 'constraints':('unconstrained',)},
@@ -1075,7 +1090,7 @@ SOLVER_SPECS: dict[str, CTAlgorithmSpec] = {
         convergence_criteria=('normalized_normal_residual', 'data_residual'),
     ),
     "cg": _algorithm(
-        "cg", "CG", (2,), ("parallel_2d",),
+        "cg", "CG", (2, 3), ("parallel_2d", "fan_2d", "parallel_3d", "cone_3d"),
         "Independent Hermitian positive definite normal-system CG.", _quadratic_parameters("cg"),
         regularizers=('tikhonov',),
         metadata={'data_fidelity':('l2','gaussian_nll','wls'), 'constraints':('unconstrained',)},
@@ -1307,7 +1322,7 @@ def validate_registry() -> tuple[str, ...]:
         if spec.parameter_names != tuple(parameter.name for parameter in spec.parameters):
             raise ValueError(f"parameter metadata mismatch for {name!r}")
         for parameter in spec.parameters:
-            if parameter.type not in {"int", "float", "bool", "str"}:
+            if parameter.type not in {"int", "float", "bool", "str", "int_array", "subset_schedule"}:
                 raise ValueError(f"unsupported parameter type for {name!r}.{parameter.name}")
             if parameter.minimum is not None and parameter.maximum is not None:
                 if parameter.minimum > parameter.maximum:
@@ -1900,8 +1915,7 @@ def validate_parameter_values(
                     f"fdk {shape_name} must contain exactly three strictly positive integers",
                     "geometry_shape_invalid",
                 )
-            elif len(set(shape_tuple)) != 1:
-                add_error(f"fdk {shape_name} must be cubic", "cubic_volume_required")
+
         if backend_capabilities:
             capability_names: set[str] = set()
             missing_cuda = False
@@ -1957,7 +1971,10 @@ def validate_parameter_values(
         else:
             validated_limits[key] = int(value)
 
-    requested_iterations = normalized.get("num_iterations")
+    from inv_framework.solvers.deep.registry import ALGORITHMS
+    from inv_framework.ct.deep import outer_parameter
+    budget_parameter = outer_parameter(algorithm) if algorithm in ALGORITHMS else "num_iterations"
+    requested_iterations = normalized.get(budget_parameter)
     iteration_limit = validated_limits["max_iterations"]
     if (
         iteration_limit is not None
@@ -2128,5 +2145,10 @@ def validate_parameter_values(
         warning_codes=tuple(dict.fromkeys(warning_codes)),
     )
 
+
+from inv_framework.ct.deep import register_specs
+SOLVER_SPECS.update(register_specs(_algorithm, _p))
+CANONICAL_ALGORITHM_IDS = tuple(SOLVER_SPECS)
+CANONICAL_CT_ALGORITHM_IDS = CANONICAL_ALGORITHM_IDS
 
 validate_registry()

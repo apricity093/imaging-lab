@@ -1,0 +1,2017 @@
+{
+  "seed": 0,
+  "server_root": "/home/gaodongxu/autodl-tmp/imaging-lab",
+  "metric_definition": "CT full-image float32, Gaussian 11x11 sigma=1.5 SSIM with zero padding; no metric clipping; data_range=reference max-min; batch index 0",
+  "results": {
+    "dip": {
+      "algorithm": "dip",
+      "title": "DIP",
+      "data": "toy_parallel_ct_128.npz",
+      "shape": [
+        128,
+        128
+      ],
+      "observation_shape": [
+        1,
+        30,
+        128
+      ],
+      "angles": 30,
+      "seed": 0,
+      "parameters": {
+        "num_iterations": 3000,
+        "lr": 0.001,
+        "input_channels": 32,
+        "ema_decay": 0.99,
+        "weights": null,
+        "seed": 0,
+        "image_scale": 1.0,
+        "image_offset": 0.0
+      },
+      "runtime_sec": 142.9983535297215,
+      "iterations": 3000,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.22066302597522736,
+        "rmse": 0.05406692251563072,
+        "psnr": 25.341367721557617,
+        "ssim": 0.6475213766098022,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.0,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": 0.0009588472312316298,
+      "reconstruction_max": 0.9993111491203308,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/dip/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/dip/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.43308423545093394,
+          "psnr_db": 7.2685524917054085,
+          "ssim7_uniform_full_map_mean": 0.02729792706668377,
+          "ssim11_gaussian_zero_padding": 0.031528107821941376,
+          "data_range": 1.0,
+          "relative_measurement_l2": 2.2863664627075195
+        },
+        "execution": {
+          "algorithm": "dip",
+          "pack": "toy_parallel_ct_128.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 1.0,
+            "image_offset": 0.0,
+            "num_iterations": 3000,
+            "lr": 0.001,
+            "input_channels": 32,
+            "ema_decay": 0.99,
+            "seed": 0
+          },
+          "device_uuid": "GPU-5857ff5e-c1a9-945e-ee90-c14707664664",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "views": 30,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/dip",
+          "source_reference": {
+            "psnr_db": 25.810628823137556,
+            "ssim7_uniform_full_map_mean": 0.6556174755096436,
+            "seconds": 102.588
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 3000,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_iterations": 3000,
+            "lr": 0.001,
+            "input_channels": 32,
+            "ema_decay": 0.99,
+            "weights": null,
+            "seed": 0,
+            "image_scale": 1.0,
+            "image_offset": 0.0
+          },
+          "native_runtime_seconds": 142.9983535297215,
+          "wall_seconds": 146.38494852837175,
+          "peak_cuda_bytes": 226326528,
+          "counts": {
+            "adam": 3000,
+            "adamw": 0,
+            "base_sampling_steps": null
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.054066924761172246,
+          "psnr_db": 25.341366633726988,
+          "ssim7_uniform_full_map_mean": 0.639060378074646,
+          "ssim11_gaussian_zero_padding": 0.6475213766098022,
+          "data_range": 1.0,
+          "relative_measurement_l2": 0.025753114372491837
+        },
+        "delta": {
+          "psnr_db": 18.072814142021578,
+          "ssim7_uniform_full_map_mean": 0.6117624510079622,
+          "ssim11_gaussian_zero_padding": 0.6159932687878609,
+          "rmse": -0.3790173106897617,
+          "relative_measurement_l2": -2.2606133483350277
+        }
+      }
+    },
+    "inr": {
+      "algorithm": "inr",
+      "title": "INR",
+      "data": "toy_parallel_ct_128.npz",
+      "shape": [
+        128,
+        128
+      ],
+      "observation_shape": [
+        1,
+        30,
+        128
+      ],
+      "angles": 30,
+      "seed": 0,
+      "parameters": {
+        "num_iterations": 2000,
+        "lr": 0.0001,
+        "hidden_features": 256,
+        "hidden_layers": 4,
+        "weights": null,
+        "seed": 0,
+        "image_scale": 1.0,
+        "image_offset": 0.0
+      },
+      "runtime_sec": 88.66465571895242,
+      "iterations": 2000,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.18110781908035278,
+        "rmse": 0.044375110417604446,
+        "psnr": 27.05721092224121,
+        "ssim": 0.5007998943328857,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.0,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": 0.01944805309176445,
+      "reconstruction_max": 0.9743656516075134,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/inr/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/inr/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.3662795101187201,
+          "psnr_db": 8.723747506658192,
+          "ssim7_uniform_full_map_mean": 0.18950003385543823,
+          "ssim11_gaussian_zero_padding": 0.18882755935192108,
+          "data_range": 1.0,
+          "relative_measurement_l2": 1.842199444770813
+        },
+        "execution": {
+          "algorithm": "inr",
+          "pack": "toy_parallel_ct_128.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 1.0,
+            "image_offset": 0.0,
+            "num_iterations": 2000,
+            "lr": 0.0001,
+            "hidden_features": 256,
+            "hidden_layers": 4,
+            "seed": 0
+          },
+          "device_uuid": "GPU-5857ff5e-c1a9-945e-ee90-c14707664664",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "views": 30,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/inr",
+          "source_reference": {
+            "psnr_db": 27.086639275494548,
+            "ssim7_uniform_full_map_mean": 0.4948577880859375,
+            "seconds": 44.927
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 2000,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_iterations": 2000,
+            "lr": 0.0001,
+            "hidden_features": 256,
+            "hidden_layers": 4,
+            "weights": null,
+            "seed": 0,
+            "image_scale": 1.0,
+            "image_offset": 0.0
+          },
+          "native_runtime_seconds": 88.66465571895242,
+          "wall_seconds": 91.95948318205774,
+          "peak_cuda_bytes": 187785728,
+          "counts": {
+            "adam": 2000,
+            "adamw": 0,
+            "base_sampling_steps": null
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.044375106677624704,
+          "psnr_db": 27.05721179785899,
+          "ssim7_uniform_full_map_mean": 0.49021244049072266,
+          "ssim11_gaussian_zero_padding": 0.5007998943328857,
+          "data_range": 1.0,
+          "relative_measurement_l2": 0.05245773121714592
+        },
+        "delta": {
+          "psnr_db": 18.333464291200798,
+          "ssim7_uniform_full_map_mean": 0.3007124066352844,
+          "ssim11_gaussian_zero_padding": 0.31197233498096466,
+          "rmse": -0.3219044034410954,
+          "relative_measurement_l2": -1.789741713553667
+        }
+      }
+    },
+    "dps": {
+      "algorithm": "dps",
+      "title": "DPS",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 1000,
+        "scale": 1.0,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 262.57098409347236,
+      "iterations": 1000,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.17048266530036926,
+        "rmse": 0.08826669305562973,
+        "psnr": 22.382848739624023,
+        "ssim": 0.5820618867874146,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.009853184223175049,
+      "reconstruction_max": 1.000225305557251,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/dps/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/dps/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.2970728488771886,
+          "psnr_db": 11.841526343316405,
+          "ssim7_uniform_full_map_mean": 0.11321111023426056,
+          "ssim11_gaussian_zero_padding": 0.12657028436660767,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.20065128803253174
+        },
+        "execution": {
+          "algorithm": "dps",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 1000,
+            "scale": 1,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/dps",
+          "source_reference": {
+            "psnr_db": 22.24920994369741,
+            "ssim7_uniform_full_map_mean": 0.5790579915046692,
+            "seconds": 485.029
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 1000,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 1000,
+            "scale": 1.0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 262.57098409347236,
+          "wall_seconds": 265.3071597069502,
+          "peak_cuda_bytes": 9313585152,
+          "counts": {
+            "adam": 0,
+            "adamw": 0,
+            "base_sampling_steps": 1000
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.08826668936361222,
+          "psnr_db": 22.382848809946903,
+          "ssim7_uniform_full_map_mean": 0.5815943479537964,
+          "ssim11_gaussian_zero_padding": 0.5820618867874146,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.011776309460401535
+        },
+        "delta": {
+          "psnr_db": 10.541322466630499,
+          "ssim7_uniform_full_map_mean": 0.4683832377195358,
+          "ssim11_gaussian_zero_padding": 0.4554916024208069,
+          "rmse": -0.2088061595135764,
+          "relative_measurement_l2": -0.1888749785721302
+        }
+      }
+    },
+    "mcg": {
+      "algorithm": "mcg",
+      "title": "MCG",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 1000,
+        "scale": 2.0,
+        "sirt_iterations": 100,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 253.11518773250282,
+      "iterations": 1000,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.21687734127044678,
+        "rmse": 0.11228734999895096,
+        "psnr": 20.29216957092285,
+        "ssim": 0.5156102776527405,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.006268739700317383,
+      "reconstruction_max": 1.0159270763397217,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/mcg/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/mcg/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.26135525325844117,
+          "psnr_db": 12.954160886996684,
+          "ssim7_uniform_full_map_mean": 0.12342599034309387,
+          "ssim11_gaussian_zero_padding": 0.13647642731666565,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.14021508395671844
+        },
+        "execution": {
+          "algorithm": "mcg",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 1000,
+            "scale": 2,
+            "sirt_iterations": 100,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/mcg",
+          "source_reference": {
+            "psnr_db": 20.345820259611735,
+            "ssim7_uniform_full_map_mean": 0.5018094778060913,
+            "seconds": 378.757
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 1000,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 1000,
+            "scale": 2.0,
+            "sirt_iterations": 100,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 253.11518773250282,
+          "wall_seconds": 254.96717821527272,
+          "peak_cuda_bytes": 9314789376,
+          "counts": {
+            "adam": 0,
+            "adamw": 0,
+            "base_sampling_steps": 1000
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.11228735240276291,
+          "psnr_db": 20.29216872786713,
+          "ssim7_uniform_full_map_mean": 0.5028679370880127,
+          "ssim11_gaussian_zero_padding": 0.5156102776527405,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.006953913252800703
+        },
+        "delta": {
+          "psnr_db": 7.3380078408704446,
+          "ssim7_uniform_full_map_mean": 0.3794419467449188,
+          "ssim11_gaussian_zero_padding": 0.37913385033607483,
+          "rmse": -0.14906790085567825,
+          "relative_measurement_l2": -0.13326117070391774
+        }
+      }
+    },
+    "pgdm": {
+      "algorithm": "pgdm",
+      "title": "PGDM",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 100,
+        "scale": 0.3,
+        "sirt_iterations": 100,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 940.9550418090075,
+      "iterations": 100,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.16430827975273132,
+        "rmse": 0.08506985008716583,
+        "psnr": 22.70327377319336,
+        "ssim": 0.5990203022956848,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -6.693601608276367e-05,
+      "reconstruction_max": 1.0000176429748535,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/pgdm/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/pgdm/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.2498246587202776,
+          "psnr_db": 13.346079508330163,
+          "ssim7_uniform_full_map_mean": 0.17076551914215088,
+          "ssim11_gaussian_zero_padding": 0.18583309650421143,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.15212956070899963
+        },
+        "execution": {
+          "algorithm": "pgdm",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 100,
+            "scale": 0.3,
+            "sirt_iterations": 100,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/pgdm",
+          "source_reference": {
+            "psnr_db": 22.71702643754437,
+            "ssim7_uniform_full_map_mean": 0.6005394458770752,
+            "seconds": 603.197
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 100,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 100,
+            "scale": 0.3,
+            "sirt_iterations": 100,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 940.9550418090075,
+          "wall_seconds": 942.7222946770489,
+          "peak_cuda_bytes": 9314552832,
+          "counts": {
+            "adam": 0,
+            "adamw": 0,
+            "base_sampling_steps": 100
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.08506984906952213,
+          "psnr_db": 22.703272318749583,
+          "ssim7_uniform_full_map_mean": 0.5964282751083374,
+          "ssim11_gaussian_zero_padding": 0.5990203022956848,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.005462205037474632
+        },
+        "delta": {
+          "psnr_db": 9.35719281041942,
+          "ssim7_uniform_full_map_mean": 0.4256627559661865,
+          "ssim11_gaussian_zero_padding": 0.4131872057914734,
+          "rmse": -0.16475480965075545,
+          "relative_measurement_l2": -0.146667355671525
+        }
+      }
+    },
+    "ddim_dds": {
+      "algorithm": "ddim_dds",
+      "title": "DDIM-DDS",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 100,
+        "eta": 0.85,
+        "cg_inner": 5,
+        "gamma": 0.0,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 45.26119239162654,
+      "iterations": 100,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.15795490145683289,
+        "rmse": 0.08178045600652695,
+        "psnr": 23.045795440673828,
+        "ssim": 0.5723764300346375,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.0038605928421020508,
+      "reconstruction_max": 1.0061142444610596,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/ddim_dds/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/ddim_dds/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.13064256021613546,
+          "psnr_db": 18.97709190985927,
+          "ssim7_uniform_full_map_mean": 0.26262059807777405,
+          "ssim11_gaussian_zero_padding": 0.25822025537490845,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.006365939974784851
+        },
+        "execution": {
+          "algorithm": "ddim_dds",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 100,
+            "eta": 0.85,
+            "cg_inner": 5,
+            "gamma": 0,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/ddim_dds",
+          "source_reference": {
+            "psnr_db": 23.04580769142451,
+            "ssim7_uniform_full_map_mean": 0.5683740973472595,
+            "seconds": 34.715
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 100,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 100,
+            "eta": 0.85,
+            "cg_inner": 5,
+            "gamma": 0.0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 45.26119239162654,
+          "wall_seconds": 48.38901293370873,
+          "peak_cuda_bytes": 1961272832,
+          "counts": {
+            "adam": 0,
+            "adamw": 0,
+            "base_sampling_steps": 100
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.08178045273788243,
+          "psnr_db": 23.04579535467954,
+          "ssim7_uniform_full_map_mean": 0.5683733820915222,
+          "ssim11_gaussian_zero_padding": 0.5723764300346375,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.0002287560055265203
+        },
+        "delta": {
+          "psnr_db": 4.068703444820272,
+          "ssim7_uniform_full_map_mean": 0.30575278401374817,
+          "ssim11_gaussian_zero_padding": 0.314156174659729,
+          "rmse": -0.048862107478253036,
+          "relative_measurement_l2": -0.006137183969258331
+        }
+      }
+    },
+    "dmplug": {
+      "algorithm": "dmplug",
+      "title": "DMPlug",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 3,
+        "epochs": 1000,
+        "lr": 0.005,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 416.67292681336403,
+      "iterations": 1000,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.2313200682401657,
+        "rmse": 0.11976489424705505,
+        "psnr": 19.732194900512695,
+        "ssim": 0.3497612476348877,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": 8.171796798706055e-05,
+      "reconstruction_max": 1.0,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/dmplug/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/dmplug/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.31049814582940005,
+          "psnr_db": 11.457605342649817,
+          "ssim7_uniform_full_map_mean": 0.1044163778424263,
+          "ssim11_gaussian_zero_padding": 0.1170583963394165,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.23578402400016785
+        },
+        "execution": {
+          "algorithm": "dmplug",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 3,
+            "epochs": 1000,
+            "lr": 0.005,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/dmplug",
+          "source_reference": {
+            "psnr_db": 19.83306599280351,
+            "ssim7_uniform_full_map_mean": 0.3665623962879181,
+            "seconds": 918.236
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 1000,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 3,
+            "epochs": 1000,
+            "lr": 0.005,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 416.67292681336403,
+          "wall_seconds": 418.6056943424046,
+          "peak_cuda_bytes": 26135046144,
+          "counts": {
+            "adam": 1000,
+            "adamw": 0,
+            "base_sampling_steps": 3000
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.11976489888993112,
+          "psnr_db": 19.73219452088298,
+          "ssim7_uniform_full_map_mean": 0.34475764632225037,
+          "ssim11_gaussian_zero_padding": 0.3497612476348877,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.024722250178456306
+        },
+        "delta": {
+          "psnr_db": 8.274589178233164,
+          "ssim7_uniform_full_map_mean": 0.24034126847982407,
+          "ssim11_gaussian_zero_padding": 0.2327028512954712,
+          "rmse": -0.19073324693946891,
+          "relative_measurement_l2": -0.21106177382171154
+        }
+      }
+    },
+    "reddiff": {
+      "algorithm": "reddiff",
+      "title": "RED-Diff",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 200,
+        "sigma": 0.0001,
+        "loss_measurement_weight": 0.5,
+        "loss_noise_weight": 10000.0,
+        "lr": 0.099,
+        "sirt_iterations": 100,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 42.96621414087713,
+      "iterations": 200,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.18348094820976257,
+        "rmse": 0.09499669820070267,
+        "psnr": 21.74461555480957,
+        "ssim": 0.6224422454833984,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.019632458686828613,
+      "reconstruction_max": 1.1310476064682007,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/reddiff/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/reddiff/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.12129525523310827,
+          "psnr_db": 19.621909310694573,
+          "ssim7_uniform_full_map_mean": 0.4053765833377838,
+          "ssim11_gaussian_zero_padding": 0.42637771368026733,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.025329172611236572
+        },
+        "execution": {
+          "algorithm": "reddiff",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 200,
+            "sigma": 0.0001,
+            "loss_measurement_weight": 0.5,
+            "loss_noise_weight": 10000,
+            "lr": 0.099,
+            "sirt_iterations": 100,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/reddiff",
+          "source_reference": {
+            "psnr_db": 21.74483872170444,
+            "ssim7_uniform_full_map_mean": 0.6178244948387146,
+            "seconds": 53.07
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 200,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 200,
+            "sigma": 0.0001,
+            "loss_measurement_weight": 0.5,
+            "loss_noise_weight": 10000.0,
+            "lr": 0.099,
+            "sirt_iterations": 100,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 42.96621414087713,
+          "wall_seconds": 46.26568726915866,
+          "peak_cuda_bytes": 9180664320,
+          "counts": {
+            "adam": 200,
+            "adamw": 0,
+            "base_sampling_steps": 200
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.09499669170381626,
+          "psnr_db": 21.744615942792073,
+          "ssim7_uniform_full_map_mean": 0.6178157329559326,
+          "ssim11_gaussian_zero_padding": 0.6224422454833984,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.011408594436943531
+        },
+        "delta": {
+          "psnr_db": 2.1227066320975005,
+          "ssim7_uniform_full_map_mean": 0.2124391496181488,
+          "ssim11_gaussian_zero_padding": 0.1960645318031311,
+          "rmse": -0.02629856352929201,
+          "relative_measurement_l2": -0.013920578174293041
+        }
+      }
+    },
+    "hybridreg": {
+      "algorithm": "hybridreg",
+      "title": "HybridReg",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 200,
+        "sigma": 0.0001,
+        "loss_measurement_weight": 0.5,
+        "loss_noise_weight": 10000.0,
+        "lr": 0.099,
+        "beta": 0.9999,
+        "sirt_iterations": 100,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 50.82285899296403,
+      "iterations": 200,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.1865103393793106,
+        "rmse": 0.09656520187854767,
+        "psnr": 21.602373123168945,
+        "ssim": 0.6184490919113159,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.0414314866065979,
+      "reconstruction_max": 1.0863457918167114,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/hybridreg/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/hybridreg/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.27166633658195904,
+          "psnr_db": 12.618069037668091,
+          "ssim7_uniform_full_map_mean": 0.337952196598053,
+          "ssim11_gaussian_zero_padding": 0.35377877950668335,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.1688733696937561
+        },
+        "execution": {
+          "algorithm": "hybridreg",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 200,
+            "sigma": 0.0001,
+            "loss_measurement_weight": 0.5,
+            "loss_noise_weight": 10000,
+            "lr": 0.099,
+            "beta": 0.9999,
+            "sirt_iterations": 100,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion"
+          },
+          "device_uuid": "GPU-20ac0738-6b55-e538-a495-1c9b75dde05c",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/hybridreg",
+          "source_reference": {
+            "psnr_db": 21.602282632940728,
+            "ssim7_uniform_full_map_mean": 0.6130390763282776,
+            "seconds": 40.582
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 200,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 200,
+            "sigma": 0.0001,
+            "loss_measurement_weight": 0.5,
+            "loss_noise_weight": 10000.0,
+            "lr": 0.099,
+            "beta": 0.9999,
+            "sirt_iterations": 100,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_pixel_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 50.82285899296403,
+          "wall_seconds": 54.036555314436555,
+          "peak_cuda_bytes": 17597530624,
+          "counts": {
+            "adam": 198,
+            "adamw": 0,
+            "base_sampling_steps": 200
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.09656520462158105,
+          "psnr_db": 21.602372262400685,
+          "ssim7_uniform_full_map_mean": 0.6130408644676208,
+          "ssim11_gaussian_zero_padding": 0.6184490919113159,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.01306424755603075
+        },
+        "delta": {
+          "psnr_db": 8.984303224732594,
+          "ssim7_uniform_full_map_mean": 0.27508866786956787,
+          "ssim11_gaussian_zero_padding": 0.26467031240463257,
+          "rmse": -0.175101131960378,
+          "relative_measurement_l2": -0.15580912213772535
+        }
+      }
+    },
+    "psld": {
+      "algorithm": "psld",
+      "title": "PSLD",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 1000,
+        "gamma": 0.8,
+        "omega": 0.2,
+        "eta": 0.0,
+        "sirt_iterations": 100,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 529.8216233504936,
+      "iterations": 1000,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.22587072849273682,
+        "rmse": 0.11694365739822388,
+        "psnr": 19.939252853393555,
+        "ssim": 0.5223208665847778,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.20672714710235596,
+      "reconstruction_max": 1.006201982498169,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/psld/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/psld/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.32342846663317437,
+          "psnr_db": 11.103220728712754,
+          "ssim7_uniform_full_map_mean": 0.16043516993522644,
+          "ssim11_gaussian_zero_padding": 0.19219371676445007,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.20560213923454285
+        },
+        "execution": {
+          "algorithm": "psld",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 1000,
+            "gamma": 0.8,
+            "omega": 0.2,
+            "eta": 0,
+            "sirt_iterations": 100,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/psld",
+          "source_reference": {
+            "psnr_db": 19.441272830668012,
+            "ssim7_uniform_full_map_mean": 0.49059417843818665,
+            "seconds": 1138.686
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 1000,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 1000,
+            "gamma": 0.8,
+            "omega": 0.2,
+            "eta": 0.0,
+            "sirt_iterations": 100,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 529.8216233504936,
+          "wall_seconds": 531.7557963002473,
+          "peak_cuda_bytes": 11522692608,
+          "counts": {
+            "adam": 0,
+            "adamw": 0,
+            "base_sampling_steps": 1000
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.11694364739716315,
+          "psnr_db": 19.939252862839115,
+          "ssim7_uniform_full_map_mean": 0.5083256959915161,
+          "ssim11_gaussian_zero_padding": 0.5223208665847778,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.046324294060468674
+        },
+        "delta": {
+          "psnr_db": 8.836032134126361,
+          "ssim7_uniform_full_map_mean": 0.3478905260562897,
+          "ssim11_gaussian_zero_padding": 0.33012714982032776,
+          "rmse": -0.20648481923601122,
+          "relative_measurement_l2": -0.15927784517407417
+        }
+      }
+    },
+    "resample": {
+      "algorithm": "resample",
+      "title": "ReSample",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 200,
+        "pixel_lr": 0.0001,
+        "latent_lr": 0.1,
+        "inter_timesteps": 5,
+        "pixel_maxiters": 2000,
+        "latent_maxiters": 500,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 1372.5333369867876,
+      "iterations": 200,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.2255600541830063,
+        "rmse": 0.1167827770113945,
+        "psnr": 19.951208114624023,
+        "ssim": 0.478956937789917,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.10713183879852295,
+      "reconstruction_max": 0.983393669128418,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/resample/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/resample/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.3395424003646195,
+          "psnr_db": 10.68090527368555,
+          "ssim7_uniform_full_map_mean": 0.1429465115070343,
+          "ssim11_gaussian_zero_padding": 0.17308726906776428,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.2279704213142395
+        },
+        "execution": {
+          "algorithm": "resample",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 200,
+            "pixel_lr": 0.0001,
+            "latent_lr": 0.1,
+            "inter_timesteps": 5,
+            "pixel_maxiters": 2000,
+            "latent_maxiters": 500,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion"
+          },
+          "device_uuid": "GPU-83aa25d0-e2b1-674d-9954-ca34ea73511f",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/resample",
+          "source_reference": {
+            "psnr_db": 19.894227288760696,
+            "ssim7_uniform_full_map_mean": 0.4665365219116211,
+            "seconds": 1889.683
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 200,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 200,
+            "pixel_lr": 0.0001,
+            "latent_lr": 0.1,
+            "inter_timesteps": 5,
+            "pixel_maxiters": 2000,
+            "latent_maxiters": 500,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 1372.5333369867876,
+          "wall_seconds": 1374.3350306674838,
+          "peak_cuda_bytes": 14677711360,
+          "counts": {
+            "adam": 0,
+            "adamw": 15835,
+            "base_sampling_steps": 200
+          },
+          "inner_optimizations": [
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.94138137809932
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 107.92015571333468
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 108.3878595456481
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.50696783978492
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.48478974867612
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.59392480552197
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.43390631955117
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 318,
+              "seconds": 93.83367168903351
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 333,
+              "seconds": 98.46868289913982
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 330,
+              "seconds": 97.54444893077016
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 267,
+              "seconds": 79.06095026433468
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 281,
+              "seconds": 83.01035023014992
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 306,
+              "seconds": 90.3685791818425
+            }
+          ]
+        },
+        "recommended": {
+          "rmse": 0.11678277969388377,
+          "psnr_db": 19.95120939984731,
+          "ssim7_uniform_full_map_mean": 0.46417298913002014,
+          "ssim11_gaussian_zero_padding": 0.478956937789917,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.06538267433643341
+        },
+        "delta": {
+          "psnr_db": 9.270304126161761,
+          "ssim7_uniform_full_map_mean": 0.32122647762298584,
+          "ssim11_gaussian_zero_padding": 0.3058696687221527,
+          "rmse": -0.22275962067073574,
+          "relative_measurement_l2": -0.1625877469778061
+        }
+      }
+    },
+    "diffstategrad": {
+      "algorithm": "diffstategrad",
+      "title": "DiffStateGrad",
+      "data": "toy_lodoind_512.npz",
+      "shape": [
+        512,
+        512
+      ],
+      "observation_shape": [
+        1,
+        40,
+        512
+      ],
+      "angles": 40,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 200,
+        "pixel_lr": 0.0001,
+        "latent_lr": 0.1,
+        "var_cutoff": 0.99,
+        "inter_timesteps": 5,
+        "period": 1,
+        "pixel_maxiters": 2000,
+        "latent_maxiters": 500,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5
+      },
+      "runtime_sec": 1226.9365023747087,
+      "iterations": 200,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.2158462107181549,
+        "rmse": 0.1117534264922142,
+        "psnr": 20.333568572998047,
+        "ssim": 0.5215950012207031,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 1.1612862348556519,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": 0.021863818168640137,
+      "reconstruction_max": 0.9905585050582886,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/diffstategrad/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/diffstategrad/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.3395425836590143,
+          "psnr_db": 10.680900584802945,
+          "ssim7_uniform_full_map_mean": 0.14294642210006714,
+          "ssim11_gaussian_zero_padding": 0.17308713495731354,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.22797055542469025
+        },
+        "execution": {
+          "algorithm": "diffstategrad",
+          "pack": "toy_lodoind_512.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 200,
+            "pixel_lr": 0.0001,
+            "latent_lr": 0.1,
+            "var_cutoff": 0.99,
+            "inter_timesteps": 5,
+            "period": 1,
+            "pixel_maxiters": 2000,
+            "latent_maxiters": 500,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion"
+          },
+          "device_uuid": "GPU-8f4ae8a6-e9a1-a865-c018-9b5fa4ffc054",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            512,
+            512
+          ],
+          "views": 40,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/diffstategrad",
+          "source_reference": {
+            "psnr_db": 20.435647531377743,
+            "ssim7_uniform_full_map_mean": 0.5103141069412231,
+            "seconds": 1234.968
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 200,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 200,
+            "pixel_lr": 0.0001,
+            "latent_lr": 0.1,
+            "var_cutoff": 0.99,
+            "inter_timesteps": 5,
+            "period": 1,
+            "pixel_maxiters": 2000,
+            "latent_maxiters": 500,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/lodoind_latent_diffusion",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5
+          },
+          "native_runtime_seconds": 1226.9365023747087,
+          "wall_seconds": 1228.8334711007774,
+          "peak_cuda_bytes": 21322758656,
+          "counts": {
+            "adam": 0,
+            "adamw": 15321,
+            "base_sampling_steps": 200
+          },
+          "inner_optimizations": [
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 114.8269111616537
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.07782017998397
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.81075605936348
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 108.21485370770097
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.80183541867882
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.76057132612914
+            },
+            {
+              "kind": "pixel_optimization",
+              "max_iters": 2000,
+              "updates": 2000,
+              "seconds": 109.98643376678228
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 238,
+              "seconds": 69.98837764095515
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 225,
+              "seconds": 66.3272893447429
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 222,
+              "seconds": 65.4875134062022
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 216,
+              "seconds": 63.75244438927621
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 211,
+              "seconds": 62.27824736107141
+            },
+            {
+              "kind": "latent_optimization",
+              "max_iters": 500,
+              "updates": 209,
+              "seconds": 61.742550243623555
+            }
+          ]
+        },
+        "recommended": {
+          "rmse": 0.11175342865579864,
+          "psnr_db": 20.33356843642938,
+          "ssim7_uniform_full_map_mean": 0.503662109375,
+          "ssim11_gaussian_zero_padding": 0.5215950012207031,
+          "data_range": 1.1612862348556519,
+          "relative_measurement_l2": 0.037393175065517426
+        },
+        "delta": {
+          "psnr_db": 9.652667851626436,
+          "ssim7_uniform_full_map_mean": 0.36071568727493286,
+          "ssim11_gaussian_zero_padding": 0.3485078662633896,
+          "rmse": -0.22778915500321567,
+          "relative_measurement_l2": -0.19057738035917282
+        }
+      }
+    },
+    "pmf_dds": {
+      "algorithm": "pmf_dds",
+      "title": "pMF-DDS",
+      "data": "toy_nasn_pmf_2048.npz",
+      "shape": [
+        2048,
+        2048
+      ],
+      "observation_shape": [
+        1,
+        2048,
+        2048
+      ],
+      "angles": 2048,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 16,
+        "dc_lam": 5.0,
+        "dc_iter": 10,
+        "eta": 0.0,
+        "omega": 1.0,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/nasn-pmf-2048-epoch449-ema.safetensors",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5,
+        "model_config": null,
+        "t_start": 1.0,
+        "warm_start": false
+      },
+      "runtime_sec": 163.34341284446418,
+      "iterations": 16,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.023392658680677414,
+        "rmse": 0.012283301912248135,
+        "psnr": 44.54261016845703,
+        "ssim": 0.996880829334259,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 2.072265625,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.4297296404838562,
+      "reconstruction_max": 1.7416013479232788,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/pmf_dds/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/pmf_dds/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.13855830146150114,
+          "psnr_db": 23.496257441721838,
+          "ssim7_uniform_full_map_mean": 0.6243788003921509,
+          "ssim11_gaussian_zero_padding": 0.6772045493125916,
+          "data_range": 2.072265625,
+          "roi_radius": 256,
+          "roi_center": [
+            1023.5,
+            1023.5
+          ],
+          "roi_psnr_db": 29.94193921785362,
+          "roi_ssim7_uniform_map_mean": 0.7772809267044067,
+          "roi_pixels": 205892,
+          "relative_measurement_l2": 0.016722477972507477
+        },
+        "execution": {
+          "algorithm": "pmf_dds",
+          "pack": "toy_nasn_pmf_2048.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 16,
+            "dc_lam": 5,
+            "dc_iter": 10,
+            "eta": 0,
+            "omega": 1,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/nasn-pmf-2048-epoch449-ema.safetensors"
+          },
+          "device_uuid": "GPU-20ac0738-6b55-e538-a495-1c9b75dde05c",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            2048,
+            2048
+          ],
+          "views": 2048,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/pmf_dds",
+          "source_reference": {
+            "psnr_db": 44.53533410894538,
+            "ssim7_uniform_full_map_mean": 0.9961941242218018,
+            "seconds": 65.19
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 16,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 16,
+            "dc_lam": 5.0,
+            "dc_iter": 10,
+            "eta": 0.0,
+            "omega": 1.0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/nasn-pmf-2048-epoch449-ema.safetensors",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "model_config": null,
+            "t_start": 1.0,
+            "warm_start": false
+          },
+          "native_runtime_seconds": 163.34341284446418,
+          "wall_seconds": 166.47581371292472,
+          "peak_cuda_bytes": 1123755008,
+          "counts": {
+            "adam": 0,
+            "adamw": 0,
+            "base_sampling_steps": 16
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.012283301060660164,
+          "psnr_db": 44.542606529944706,
+          "ssim7_uniform_full_map_mean": 0.9961836338043213,
+          "ssim11_gaussian_zero_padding": 0.996880829334259,
+          "data_range": 2.072265625,
+          "roi_radius": 256,
+          "roi_center": [
+            1023.5,
+            1023.5
+          ],
+          "roi_psnr_db": 63.47111315603914,
+          "roi_ssim7_uniform_map_mean": 0.9997863173484802,
+          "roi_pixels": 205892,
+          "relative_measurement_l2": 0.00023667467758059502
+        },
+        "delta": {
+          "psnr_db": 21.04634908822287,
+          "ssim7_uniform_full_map_mean": 0.3718048334121704,
+          "ssim11_gaussian_zero_padding": 0.3196762800216675,
+          "rmse": -0.12627500040084097,
+          "relative_measurement_l2": -0.016485803294926882
+        }
+      }
+    },
+    "pmf_lora_dds": {
+      "algorithm": "pmf_lora_dds",
+      "title": "pMF-LoRA-DDS",
+      "data": "toy_nasn_pmf_2048.npz",
+      "shape": [
+        2048,
+        2048
+      ],
+      "observation_shape": [
+        1,
+        2048,
+        2048
+      ],
+      "angles": 2048,
+      "seed": 0,
+      "parameters": {
+        "num_inference_steps": 16,
+        "dc_lam": 5.0,
+        "dc_iter": 10,
+        "eta": 0.0,
+        "omega": 1.0,
+        "lora_rank": 8,
+        "adapt_lr": 0.0001,
+        "adapt_K": 4,
+        "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/nasn-pmf-2048-epoch449-ema.safetensors",
+        "seed": 0,
+        "image_scale": 0.5,
+        "image_offset": 0.5,
+        "model_config": null
+      },
+      "runtime_sec": 893.3852141015232,
+      "iterations": 16,
+      "converged": false,
+      "stopping_reason": "fixed_budget_completed",
+      "status": "success",
+      "metrics": {
+        "relative_error": 0.004522901028394699,
+        "rmse": 0.0023745079524815083,
+        "psnr": 58.81743621826172,
+        "ssim": 0.9997663497924805,
+        "ssim_definition": "2d_ssim"
+      },
+      "data_range": 2.072265625,
+      "display_range": [
+        0.0,
+        1.0
+      ],
+      "reconstruction_min": -0.418651282787323,
+      "reconstruction_max": 1.6234610080718994,
+      "displayed_batch_index": 0,
+      "batch_size": 1,
+      "server_result": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/pmf_lora_dds/result.json",
+      "server_reconstruction": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/parameter_comparison/pmf_lora_dds/reconstruction.npy",
+      "comparison": {
+        "baseline": {
+          "rmse": 0.13588158715898352,
+          "psnr_db": 23.665696238800788,
+          "ssim7_uniform_full_map_mean": 0.6320417523384094,
+          "ssim11_gaussian_zero_padding": 0.6849008202552795,
+          "data_range": 2.072265625,
+          "roi_radius": 256,
+          "roi_center": [
+            1023.5,
+            1023.5
+          ],
+          "roi_psnr_db": 30.216290469793663,
+          "roi_ssim7_uniform_map_mean": 0.7862396240234375,
+          "roi_pixels": 205892,
+          "relative_measurement_l2": 0.016148477792739868
+        },
+        "execution": {
+          "algorithm": "pmf_lora_dds",
+          "pack": "toy_nasn_pmf_2048.npz",
+          "seed": 0,
+          "parameters": {
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "num_inference_steps": 16,
+            "dc_lam": 5,
+            "dc_iter": 10,
+            "eta": 0,
+            "omega": 1,
+            "lora_rank": 8,
+            "adapt_lr": 0.0001,
+            "adapt_K": 4,
+            "seed": 0,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/nasn-pmf-2048-epoch449-ema.safetensors"
+          },
+          "device_uuid": "GPU-20ac0738-6b55-e538-a495-1c9b75dde05c",
+          "reference_used_for_reconstruction": false,
+          "shape": [
+            1,
+            2048,
+            2048
+          ],
+          "views": 2048,
+          "baseline": "/home/gaodongxu/autodl-tmp/imaging-lab/runs/public/pmf_lora_dds",
+          "source_reference": {
+            "psnr_db": 59.16606654750687,
+            "ssim7_uniform_full_map_mean": 0.999772846698761,
+            "seconds": 924.108
+          },
+          "status": "success",
+          "error": null,
+          "iterations": 16,
+          "converged": false,
+          "stopping_reason": "fixed_budget_completed",
+          "effective_params": {
+            "num_inference_steps": 16,
+            "dc_lam": 5.0,
+            "dc_iter": 10,
+            "eta": 0.0,
+            "omega": 1.0,
+            "lora_rank": 8,
+            "adapt_lr": 0.0001,
+            "adapt_K": 4,
+            "weights": "/home/gaodongxu/autodl-tmp/imaging-lab/weights/nasn-pmf-2048-epoch449-ema.safetensors",
+            "seed": 0,
+            "image_scale": 0.5,
+            "image_offset": 0.5,
+            "model_config": null
+          },
+          "native_runtime_seconds": 893.3852141015232,
+          "wall_seconds": 896.6070967456326,
+          "peak_cuda_bytes": 1747044864,
+          "counts": {
+            "adam": 64,
+            "adamw": 0,
+            "base_sampling_steps": 16
+          },
+          "inner_optimizations": []
+        },
+        "recommended": {
+          "rmse": 0.0023745079598875346,
+          "psnr_db": 58.81743586303479,
+          "ssim7_uniform_full_map_mean": 0.9997535943984985,
+          "ssim11_gaussian_zero_padding": 0.9997663497924805,
+          "data_range": 2.072265625,
+          "roi_radius": 256,
+          "roi_center": [
+            1023.5,
+            1023.5
+          ],
+          "roi_psnr_db": 68.06319393610819,
+          "roi_ssim7_uniform_map_mean": 0.999923586845398,
+          "roi_pixels": 205892,
+          "relative_measurement_l2": 6.0981685237493366e-05
+        },
+        "delta": {
+          "psnr_db": 35.151739624234,
+          "ssim7_uniform_full_map_mean": 0.3677118420600891,
+          "ssim11_gaussian_zero_padding": 0.3148655295372009,
+          "rmse": -0.133507079199096,
+          "relative_measurement_l2": -0.016087496107502375
+        }
+      }
+    }
+  }
+}

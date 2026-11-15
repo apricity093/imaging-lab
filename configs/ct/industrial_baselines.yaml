@@ -1,0 +1,17 @@
+fbp:
+  scale: null
+fdk:
+  filter_type: ram-lak
+sirt:
+  num_iterations: 200
+  min_value: 0.0
+  max_value: null
+landweber:
+  num_iterations: 400
+  step_size: null
+  min_value: 0.0
+  max_value: null
+cg:
+  lam_rel: 0.001
+  num_iterations: 20
+  tolerance: 0.000001

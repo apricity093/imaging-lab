@@ -7,7 +7,7 @@
 - **所属任务**：CT。
 - **方法类型**：非学习类，无需训练权重。
 - **适用范围**：OS-SART 作为有序子集变体合并说明；子集与块大小须符合实际角度划分。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/solvers/algebraic.py](../../inv_framework/solvers/algebraic.py)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/solvers/algebraic.py](../../inv_framework/solvers/algebraic.py)。
 
 ### 领域入口与目标
 

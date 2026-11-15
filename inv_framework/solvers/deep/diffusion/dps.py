@@ -1,14 +1,20 @@
-"""solvers deep diffusion dps implementation."""
-from __future__ import annotations
+"""Diffusion Posterior Sampling (DPS) solver.
+
+Chung et al., 2023, https://arxiv.org/abs/2209.14687.
+Requires a pretrained noise predictor eps_theta(x_t, t). Works with both the
+built-in `VPSchedule` and any HuggingFace `diffusers` scheduler wrapped via
+`DiffusersScheduleAdapter`.
+"""
 
 from typing import Optional
 import torch
 import torch.nn as nn
+
 from inv_framework.core.operator import ForwardOperator
 from inv_framework.ct.noise import NoiseModel
 from inv_framework.solvers.base import InverseProblemSolver
-from inv_framework.solvers.deep.diffusion.scheduler import NoiseSchedule, VPSchedule
-from inv_framework.solvers.deep.diffusion.conditioning import ConditioningMethod, PosteriorSampling
+from .scheduler import NoiseSchedule, VPSchedule
+from .conditioning import ConditioningMethod, PosteriorSampling
 
 
 class DPSSolver(InverseProblemSolver):
@@ -53,6 +59,7 @@ class DPSSolver(InverseProblemSolver):
               operator: ForwardOperator,
               noiser: Optional[NoiseModel] = None,
               x_init: Optional[torch.Tensor] = None,
+              generator=None,
               **kwargs) -> torch.Tensor:
         device = measurement.device
         B = measurement.shape[0]
@@ -63,7 +70,7 @@ class DPSSolver(InverseProblemSolver):
         self.schedule.set_timesteps(self.num_inference_steps, device=device)
 
         if x_init is None:
-            x_t = torch.randn((B, *operator.domain_shape), device=device)
+            x_t = torch.randn((B, *operator.domain_shape), device=device, dtype=measurement.dtype, generator=generator)
         else:
             x_t = x_init.clone()
 
@@ -73,9 +80,17 @@ class DPSSolver(InverseProblemSolver):
             t_batch = t.expand(B) if torch.is_tensor(t) else torch.full(
                 (B,), int(t), device=device, dtype=torch.long)
             eps = self.model(x_t, t_batch)
-            x_t_next, x_0_hat = self.schedule.step(eps, t, x_t, eta=self.eta)
+            step_kwargs = {"eta": self.eta}
+            if generator is not None:
+                import inspect
+                if "generator" not in inspect.signature(self.schedule.step).parameters:
+                    raise TypeError("this schedule does not support an explicit generator")
+                step_kwargs["generator"] = generator
+            x_t_next, x_0_hat = self.schedule.step(eps, t, x_t, **step_kwargs)
             x_t_next, residual = cond.apply(
-                x_t_next, x_0_hat, measurement, x_prev=x_t)
+                x_t_next, x_0_hat, measurement, x_prev=x_t,
+                step_index=i, num_steps=self.num_inference_steps,
+                timestep=t)
             x_t = x_t_next.detach()
 
             if self.log_every and (i % self.log_every == 0

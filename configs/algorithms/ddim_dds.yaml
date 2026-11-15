@@ -1,0 +1,11 @@
+schema_version: 1
+name: ddim_dds
+parameters:
+  num_inference_steps: 100
+  eta: 0.85
+  cg_inner: 5
+  gamma: 0.0
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

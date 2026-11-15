@@ -1,0 +1,10 @@
+recursive-include LICENSES *.txt
+recursive-include inv_framework/ct/backends/radon_cuda *.cpp *.cu
+recursive-include configs *.yaml
+recursive-include docs *.md *.yaml
+recursive-include examples/ct_data *.npz *.md
+include examples/run_deep_ct.py examples/run_industrial_ct.py
+include tools/render_algorithm_docs.py tools/render_deep_docs.py tools/make_ct_toy_data.py tools/download_deep_weights.py
+recursive-include examples *.py *.md *.yaml *.json
+include DEPENDENCIES.md
+recursive-include docs/algorithms/source_cards *.json

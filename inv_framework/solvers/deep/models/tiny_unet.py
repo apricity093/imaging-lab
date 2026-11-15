@@ -1,5 +1,8 @@
-"""solvers deep models tiny_unet implementation."""
-from __future__ import annotations
+"""Compact time-conditioned UNet for diffusion demos.
+
+Predicts the noise epsilon given (x_t, t). Kept small (a few M params) so the
+DPS demo can train end-to-end in a few minutes on a single GPU.
+"""
 
 import math
 import torch

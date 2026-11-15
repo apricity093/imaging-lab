@@ -21,12 +21,12 @@ def sirt(operator: LinearOperator,
     domain = (B, *operator.domain_shape)
     range_ = (B, *operator.range_shape)
 
-    R = operator.forward(torch.ones(domain, device=device))
+    R = operator.forward(torch.ones(domain, device=device, dtype=y.dtype))
     R = torch.where(R < 1e-8, torch.full_like(R, float('inf')), R).reciprocal()
-    C = operator.adjoint(torch.ones(range_, device=device))
+    C = operator.adjoint(torch.ones(range_, device=device, dtype=y.dtype))
     C = torch.where(C < 1e-8, torch.full_like(C, float('inf')), C).reciprocal()
 
-    x = (torch.zeros(domain, device=device)
+    x = (torch.zeros(domain, device=device, dtype=y.dtype)
          if x_init is None else x_init.clone())
     for _ in range(num_iterations):
         residual = operator.forward(x) - y
@@ -50,9 +50,11 @@ def landweber(operator: LinearOperator,
     domain = (B, *operator.domain_shape)
 
     if step_size is None:
-        step_size = 1e-3
+        from inv_framework.solvers._iteration import _estimate_operator_norm_squared
+        estimate = _estimate_operator_norm_squared(operator, y, iterations=12)
+        step_size = 0.9 / estimate if estimate > 0 else 1.0
 
-    x = (torch.zeros(domain, device=device)
+    x = (torch.zeros(domain, device=device, dtype=y.dtype)
          if x_init is None else x_init.clone())
     for _ in range(num_iterations):
         residual = operator.forward(x) - y
@@ -721,7 +723,7 @@ def solve_landweber_detailed(
     limit = min(int(num_iterations), int(control.max_iterations or num_iterations))
     parameters = {
         "num_iterations": int(num_iterations),
-        "step_size": 1e-3 if step_size is None else step_size,
+        "step_size": step_size,
         "min_value": min_value,
         "max_value": max_value,
     }

@@ -53,6 +53,8 @@ def normalize_ct_parameters(supplied, algorithm=None):
         aliases["reg_strength"] = "strength"
     elif algorithm == "tikhonov":
         aliases.update(lam="reg_strength", strength="reg_strength")
+    elif algorithm == "cg":
+        aliases["tol"] = "tolerance"
     elif algorithm == "landweber":
         aliases["learning_rate"] = "step_size"
     for alias, canonical in aliases.items():
@@ -143,6 +145,11 @@ def execution_controls(domain, algorithm, defaults):
     """Supported top-level fields mapped to existing outer algorithm parameters."""
     policy = {}
     budget = 'num_iterations' if 'num_iterations' in defaults else 'max_iter' if 'max_iter' in defaults else None
+    if domain == 'ct':
+        from inv_framework.solvers.deep.registry import ALGORITHMS
+        from inv_framework.ct.deep import outer_parameter
+        if algorithm in ALGORITHMS:
+            budget = outer_parameter(algorithm)
     if budget:
         policy['max_iterations'] = budget
     if 'tolerance' in defaults:
@@ -218,7 +225,7 @@ def describe_outputs(result, model):
             units = 'dimensionless' if name == 'psf' else 'unknown; object intensity in declared observation model'
             scale = 'unit-sum PSF' if name == 'psf' else 'object x in gain*H(x)+background; no post-rescaling'
         else:
-            axes = ['batch','z','y','x'] if array.ndim == 4 and (model.get('geometry',{}).get('type') == 'cone_3d' or result.diagnostics.get('dimension') == 3) else ['batch','channel','y','x']
+            axes = ['batch','z','y','x'] if array.ndim == 4 and (model.get('geometry',{}).get('type') in {'cone_3d','parallel_3d'} or result.diagnostics.get('dimension') == 3) else ['batch','channel','y','x']
             representation, units, scale = 'real', 'unknown; attenuation model units unspecified', 'native reconstruction scale'
         if len(axes) != array.ndim:
             axes = [f'axis_{i}' for i in range(array.ndim)]

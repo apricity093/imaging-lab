@@ -43,3 +43,45 @@ McKibben, implementing Gach, Tanase and Boada's 2008 MR Shepp-Logan standard.
 This dependency is used for data preparation, not the reconstruction runtime.
 No real fastMRI patient data is redistributed. fastMRI source-code licensing
 does not replace the dataset use agreement.
+
+## Industrial CT integration
+
+CT geometry adapters and example datasets derive from peterw634/inv_framework,
+commit dc181fb65afbf300a9935c3c770231c44ffc0c78.
+The CUDA projector derives from nasn-truncated-ct commit
+35bb7088273dddb07495cafbf9fcc612c07ae930 under BSD-3-Clause.
+Gridrec derives from TomoPy 1.15.x under BSD-3-Clause.
+Licenses are retained in LICENSES/NaSn-BSD-3-Clause.txt and
+LICENSES/TomoPy-BSD-3-Clause.txt. Dataset licenses are listed in
+examples/ct_data/README.md.
+
+## Deep-prior integration
+
+DIP, INR, diffusion solvers, conditioning, CG correction, LoRA and pMF models are migrated from peterw634/inv_framework at dc181fb65afbf300a9935c3c770231c44ffc0c78. Existing source notices and LICENSES apply. DM4CT model revisions and pMF release assets are declared in docs/ct/deep_priors.md and inv_framework/solvers/deep/models/resources/model-v0.1.0.json. Source card measurements retain their original evaluation conditions. LoDoInd data retain CC BY-NC 4.0 terms.
+
+## NaSn application
+
+Data preparation, training, EMA export and benchmark orchestration in inv_framework/applications/nasn_ct derive from the same fixed NaSn integration above. Dataset manifests retain upstream publication and license declarations. No raw NaSn scans or trained checkpoints are redistributed.
+
+## Retained model, scheduler and dataset notices
+
+The pMF model source retains the upstream MIT license, Copyright (c) Yiyang Lu,
+in LICENSES/pMF-MIT.txt. The ReSample DDIM scheduler adaptation derives from
+Hugging Face Diffusers 0.32.2 under Apache-2.0, retained in
+LICENSES/diffusers-Apache-2.0.txt. The NaSn dataset attribution declaration is
+retained in LICENSES/CC-BY-4.0-DATA.txt. The local data manifest currently has
+published=false. Dataset access and publication status follow that manifest.
+
+The diffusion inference reference is DM4CT/DM4CT commit
+49b3e5907178b56338d55c17944de17168a7a0a1 (pipelines.py and condition_methods.py).
+The fixed source snapshot reports no standalone license for that reference
+material. This notice does not assign a new license to that upstream material.
+The MIT declarations for downloaded model weights apply to those model assets.
+The migrated source branch also supplies no repository-wide LICENSE file.
+Its provenance and component notices are retained without assigning it a new
+upstream license.
+
+Source algorithm measurements are retained in
+docs/algorithms/source_cards/results.json and method cards. Those records keep
+the upstream evaluation protocol and environment. Current local validation is
+recorded separately in docs/ct.

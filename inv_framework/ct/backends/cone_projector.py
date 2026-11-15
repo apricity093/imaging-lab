@@ -27,13 +27,26 @@ def cone_apply(tensor, volume_geometry, projection_geometry, forward):
     for start in range(0, ray_count, 1024):
         ids = torch.arange(start, min(start+1024,ray_count), device=tensor.device)
         column, angle_index, row = ids % cols, (ids//cols) % len(angles), ids//(cols*len(angles))
-        angle = angles[angle_index]
-        radial = torch.stack((angle.sin(), -angle.cos(), torch.zeros_like(angle)), -1)
-        horizontal = torch.stack((angle.cos(), angle.sin(), torch.zeros_like(angle)), -1)
-        source = radial*projection_geometry['DistanceOriginSource']
-        detector = -radial*projection_geometry['DistanceOriginDetector']
-        detector += horizontal*((column-(cols-1)/2)*projection_geometry['DetectorSpacingX'])[:,None]
-        detector[:,2] += (row-(rows-1)/2)*projection_geometry['DetectorSpacingY']
+        vectors = projection_geometry.get('Vectors')
+        if vectors is not None:
+            vector = torch.as_tensor(vectors, device=tensor.device, dtype=tensor.dtype)[angle_index]
+            detector = vector[:, 3:6] + (column-(cols-1)/2)[:,None]*vector[:,6:9] + (row-(rows-1)/2)[:,None]*vector[:,9:12]
+            if projection_geometry['type'] == 'parallel3d_vec':
+                ray = vector[:,:3]
+                ray = ray / ray.norm(dim=-1, keepdim=True)
+                distance = (high-low).norm()*2
+                source = detector - ray*distance
+                detector = detector + ray*distance
+            else:
+                source = vector[:,:3]
+        else:
+            angle = angles[angle_index]
+            radial = torch.stack((angle.sin(), -angle.cos(), torch.zeros_like(angle)), -1)
+            horizontal = torch.stack((angle.cos(), angle.sin(), torch.zeros_like(angle)), -1)
+            source = radial*projection_geometry['DistanceOriginSource']
+            detector = -radial*projection_geometry['DistanceOriginDetector']
+            detector += horizontal*((column-(cols-1)/2)*projection_geometry['DetectorSpacingX'])[:,None]
+            detector[:,2] += (row-(rows-1)/2)*projection_geometry['DetectorSpacingY']
         direction = detector-source
         parallel = direction == 0
         safe_direction = torch.where(parallel, torch.ones_like(direction), direction)

@@ -7,7 +7,7 @@
 - **所属任务**：反卷积。
 - **方法类型**：非学习类，无需训练权重。
 - **适用范围**：周期卷积、已知 PSF、二次数据项；balance 为 Laplacian 正则权重。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/deconvolution/solvers.py](../../inv_framework/deconvolution/solvers.py)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/deconvolution/solvers.py](../../inv_framework/deconvolution/solvers.py)。
 
 ### 领域入口与目标
 

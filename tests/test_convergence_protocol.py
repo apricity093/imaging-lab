@@ -118,6 +118,21 @@ def test_terminal_patience_evidence_is_retained_and_json_safe():
     assert json.loads(serialized)["terminal_evidence"]["patience_window"][2]["value"] is None
 
 
+def test_sampled_trajectory_preserves_completed_iteration_budget():
+    rows = [dict(iteration=index, normalized_residual=1.0 / index)
+            for index in range(1, 401)]
+    sampled = sample_trajectory(rows, max_points=200)
+    report = post_run_validation(
+        torch.ones((1, 4)), measurement=torch.zeros((1, 4)),
+        predicted_measurement=torch.ones((1, 4)), operator=IdentityOperator(),
+        trajectory=sampled, iterations=400, max_iterations=400,
+        algorithm="landweber",
+    )
+    assert len(sampled) < 400
+    assert report.status == ConvergenceStatus.MAX_ITERATIONS
+    assert report.iterations == 400
+
+
 def test_solve_result_normalizes_legacy_numerical_failure():
     result = SolveResult(
         reconstruction=torch.zeros((1, 4)),

@@ -95,7 +95,7 @@ MRI 和反卷积另有 `admm`、`pdhg`、`fista`、`landweber`、`cgls`、`lsqr`
 
 MRI 和反卷积不使用 ASTRA。VarNet 网络在仓库内提供，不需要另外安装
 `fastmri` 或 PyTorch Lightning；权重不随包分发，执行时不会自动下载。
-DIP、INR、DPS 是库级接口，不属于 CT 公开任务 API 的 18 个算法。
+DIP、INR、DPS 及迁入扩散与 mean-flow 方法同时提供 CT 公共任务和独立求解器入口。权重、网格和设备条件由实际能力查询表达。
 
 CT 设备与后端是两个独立选项。`run_ct_task()` / `invct task` 的二维任务默认
 `backend="torch"`、`device="cpu"`；三维 FDK 请求使用 `backend="astra"`、
@@ -202,3 +202,7 @@ CT 后端发现可通过 `from inv_framework.api import list_capabilities` 查�
 MRI／反卷积的 `list_capabilities()` 描述算法契约，不代替可选依赖、权重和实际任务检查。
 导入、设备检查成功也不代表数值验收通过；测试命令和已知限制见
 [验证说明](docs/validation.md)。开发依赖不会自动启用 GPU、LEAP 或外部权重测试。
+
+## 工业与深度资源
+
+扩散 extras 固定 diffusers==0.32.2，NaSn 预处理与训练分别使用 nasn、nasn-train。安装后的 inv-download-weights 提供显式模型获取。工业几何、CUDA 编译依赖、资源目录及文件模板见 [CT 安装资源](docs/ct/resources.md)。真实权重及数据的当前限制保留在领域验证记录。

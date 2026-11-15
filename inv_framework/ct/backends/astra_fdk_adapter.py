@@ -60,6 +60,39 @@ def _validate_fdk_geometry(volume_geometry, projection_geometry) -> None:
             "ASTRA FDK_CUDA requires cubic voxels; computed voxel sizes are "
             f"{voxel_sizes}."
         )
+def run_fdk_projection(projection, volume_geometry, projection_geometry, options):
+    """Return ASTRA's native ascending-Y FDK volume using owned buffers."""
+    astra = _astra_backend.astra
+    projection_id = None
+    reconstruction_id = None
+    algorithm_id = None
+    try:
+        # ASTRA 2.2 GPU-link FDK can vary across identical small inputs.
+        # ASTRA-owned buffers keep native CUDA filtering storage private.
+        projection_array = np.ascontiguousarray(projection.detach().cpu().numpy(), dtype=np.float32)
+        projection_id = astra.data3d.create("-sino", projection_geometry, projection_array)
+        reconstruction_id = astra.data3d.create("-vol", volume_geometry, 0.0)
+
+        config = astra.astra_dict("FDK_CUDA")
+        config["ProjectionDataId"] = projection_id
+        config["ReconstructionDataId"] = reconstruction_id
+        config["option"] = dict(options)
+        algorithm_id = astra.algorithm.create(config)
+        if projection.is_cuda:
+            torch.cuda.synchronize(projection.device)
+        astra.algorithm.run(algorithm_id)
+
+        reconstruction_array = np.asarray(
+            astra.data3d.get(reconstruction_id), dtype=np.float32
+        )
+        return torch.from_numpy(np.ascontiguousarray(reconstruction_array))
+    finally:
+        if algorithm_id is not None:
+            astra.algorithm.delete(algorithm_id)
+        if reconstruction_id is not None:
+            astra.data3d.delete(reconstruction_id)
+        if projection_id is not None:
+            astra.data3d.delete(projection_id)
 
 
 class _ASTRAFDKForwardFunction(torch.autograd.Function):
@@ -90,7 +123,8 @@ class ASTRAFDKOperator3D(ASTRAOperator3D):
     Only ASTRA's regular circular ``cone`` geometry with cubic voxels is
     accepted.  Each input must be batched as ``(B, detector_rows, angles,
     detector_cols)``. Projection and adjoint share trilinear ray weights.
-    FDK uses ASTRA-owned data objects and restores the caller's device and dtype.
+    FDK uses ASTRA-owned data objects and returns descending world Y,
+    preserving the caller's device and dtype.
     """
 
     def close(self):
@@ -135,37 +169,7 @@ class ASTRAFDKOperator3D(ASTRAOperator3D):
         return _ASTRAFDKAdjointFunction.apply(y, self)
 
     def _run_fdk_one(self, projection: torch.Tensor, options: dict) -> torch.Tensor:
-        astra = _astra_backend.astra
-        projection_id = None
-        reconstruction_id = None
-        algorithm_id = None
-        try:
-            # ASTRA 2.2 GPU-link FDK can vary across identical small inputs.
-            # ASTRA-owned buffers keep native CUDA filtering storage private.
-            projection_array = np.ascontiguousarray(projection.detach().cpu().numpy(), dtype=np.float32)
-            projection_id = astra.data3d.create("-sino", self.projection_geometry, projection_array)
-            reconstruction_id = astra.data3d.create("-vol", self.volume_geometry, 0.0)
-
-            config = astra.astra_dict("FDK_CUDA")
-            config["ProjectionDataId"] = projection_id
-            config["ReconstructionDataId"] = reconstruction_id
-            config["option"] = dict(options)
-            algorithm_id = astra.algorithm.create(config)
-            if projection.is_cuda:
-                torch.cuda.synchronize(projection.device)
-            astra.algorithm.run(algorithm_id)
-
-            reconstruction_array = np.asarray(
-                astra.data3d.get(reconstruction_id), dtype=np.float32
-            )
-            return torch.from_numpy(np.ascontiguousarray(reconstruction_array))
-        finally:
-            if algorithm_id is not None:
-                astra.algorithm.delete(algorithm_id)
-            if reconstruction_id is not None:
-                astra.data3d.delete(reconstruction_id)
-            if projection_id is not None:
-                astra.data3d.delete(projection_id)
+        return run_fdk_projection(projection, self.volume_geometry, self.projection_geometry, options)
 
     def fdk(
         self,
@@ -222,5 +226,6 @@ class ASTRAFDKOperator3D(ASTRAOperator3D):
         # ASTRA receives private storage; caller observations remain unchanged.
         work = y.detach().to(dtype=torch.float32).contiguous()
         reconstructions = [self._run_fdk_one(work[index], options) for index in range(y.shape[0])]
-        result = torch.stack(reconstructions, dim=0)
+        # ASTRA volumes ascend in world Y, the public volume axes descend.
+        result = torch.stack(reconstructions, dim=0).flip(-2)
         return result.to(device=original_device, dtype=original_dtype)

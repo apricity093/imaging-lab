@@ -1,0 +1,10 @@
+schema_version: 1
+name: dmplug
+parameters:
+  num_inference_steps: 3
+  epochs: 1000
+  lr: 0.005
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

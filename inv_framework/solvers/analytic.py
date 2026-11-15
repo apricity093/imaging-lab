@@ -34,6 +34,9 @@ def fbp(operator: LinearOperator,
         scale: float = None) -> torch.Tensor:
     """Filtered Back-Projection reconstruction."""
     require_linear_operator(operator, "fbp")
+    analytic = getattr(operator, "fbp", None)
+    if callable(analytic):
+        return analytic(y) * (1.0 if scale is None else scale)
     y_filt = _filter_sino(y)
     rec = operator.adjoint(y_filt)
     if scale is None:

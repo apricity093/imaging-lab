@@ -1,0 +1,11 @@
+schema_version: 1
+name: dip
+parameters:
+  num_iterations: 3000
+  lr: 0.001
+  input_channels: 32
+  ema_decay: 0.99
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

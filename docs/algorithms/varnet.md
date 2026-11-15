@@ -7,7 +7,7 @@
 - **所属任务**：MRI。
 - **方法类型**：学习类，使用训练权重。
 - **适用范围**：二维 Cartesian 输入；网络结构和 ACS 设置须匹配本地权重。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/mri/varnet_inference.py](../../inv_framework/mri/varnet_inference.py)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/mri/varnet_inference.py](../../inv_framework/mri/varnet_inference.py)。
 
 ### 领域入口与目标
 

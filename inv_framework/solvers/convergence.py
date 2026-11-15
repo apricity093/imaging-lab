@@ -375,6 +375,8 @@ def classify_trajectory(
             terminal_evidence=_report_evidence(rows, patience),
         )
 
+    completed_iterations = int(rows[-1].get("iteration", len(rows)))
+
     residuals = [_metric(row, ("normalized_residual", "data_residual", "residual", "normal_residual", "objective")) for row in rows]
     relative_changes = [_metric(row, ("relative_iterate_change", "iterate_change", "relative_change")) for row in rows]
     objective = [_metric(row, ("objective",)) for row in rows]
@@ -382,7 +384,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.NUMERICAL_ERROR,
             stopping_reason="non_finite_trajectory_value",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             trajectory=sampled,
             failure_reason="trajectory contains NaN or Inf",
@@ -394,7 +396,7 @@ def classify_trajectory(
         normalize_status(
             row["status"],
             algorithm=algorithm,
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
         ).value
         for row in rows if row.get("status")
@@ -403,7 +405,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.NUMERICAL_ERROR,
             stopping_reason="solver_reported_numerical_error",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             final_residual=residuals[-1],
             final_objective=objective[-1],
@@ -417,7 +419,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.DIVERGED,
             stopping_reason="solver_reported_divergence",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             final_residual=residuals[-1],
             final_objective=objective[-1],
@@ -431,7 +433,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.RESOURCE_EXHAUSTED,
             stopping_reason="resource_budget_exhausted",
-            iterations=len(rows), max_iterations=max_iterations,
+            iterations=completed_iterations, max_iterations=max_iterations,
             final_residual=residuals[-1], final_objective=objective[-1],
             relative_iterate_change=relative_changes[-1], trajectory=sampled,
             algorithm=algorithm, terminal_evidence=_report_evidence(rows, patience),
@@ -440,7 +442,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.CANCELLED,
             stopping_reason="cancelled_by_callback",
-            iterations=len(rows), max_iterations=max_iterations,
+            iterations=completed_iterations, max_iterations=max_iterations,
             final_residual=residuals[-1], final_objective=objective[-1],
             relative_iterate_change=relative_changes[-1], trajectory=sampled,
             algorithm=algorithm, terminal_evidence=_report_evidence(rows, patience),
@@ -449,7 +451,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.MAX_ITERATIONS,
             stopping_reason="maximum_iterations_reached",
-            iterations=len(rows), max_iterations=max_iterations,
+            iterations=completed_iterations, max_iterations=max_iterations,
             final_residual=residuals[-1], final_objective=objective[-1],
             relative_iterate_change=relative_changes[-1], trajectory=sampled,
             algorithm=algorithm, terminal_evidence=_report_evidence(rows, patience),
@@ -465,7 +467,7 @@ def classify_trajectory(
             return ConvergenceReport(
                 status=ConvergenceStatus.DIVERGED,
                 stopping_reason="residual_or_objective_increasing",
-                iterations=len(rows),
+                iterations=completed_iterations,
                 max_iterations=max_iterations,
                 final_residual=residuals[-1],
                 final_objective=objective[-1],
@@ -479,11 +481,11 @@ def classify_trajectory(
     # Reaching the configured boundary is a budget outcome.  It must not be
     # promoted to convergence merely because the last sampled row happens to
     # satisfy a residual/change threshold.
-    if max_iterations is not None and len(rows) >= int(max_iterations):
+    if max_iterations is not None and completed_iterations >= int(max_iterations):
         return ConvergenceReport(
             status=ConvergenceStatus.MAX_ITERATIONS,
             stopping_reason="maximum_iterations_reached",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             final_residual=residuals[-1],
             final_objective=objective[-1],
@@ -508,7 +510,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.CONVERGED,
             stopping_reason="residual_or_iterate_tolerance",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             final_residual=final_residual,
             final_objective=objective[-1],
@@ -524,7 +526,7 @@ def classify_trajectory(
         return ConvergenceReport(
             status=ConvergenceStatus.STALLED,
             stopping_reason="iterate_change_below_progress_threshold",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             final_residual=final_residual,
             final_objective=objective[-1],
@@ -534,11 +536,11 @@ def classify_trajectory(
             terminal_evidence=_report_evidence(rows, patience),
         )
 
-    if max_iterations is not None and len(rows) >= int(max_iterations):
+    if max_iterations is not None and completed_iterations >= int(max_iterations):
         return ConvergenceReport(
             status=ConvergenceStatus.MAX_ITERATIONS,
             stopping_reason="maximum_iterations_reached",
-            iterations=len(rows),
+            iterations=completed_iterations,
             max_iterations=max_iterations,
             final_residual=final_residual,
             final_objective=objective[-1],
@@ -552,7 +554,7 @@ def classify_trajectory(
     return ConvergenceReport(
         status=incomplete_status,
         stopping_reason="trajectory_ended_before_convergence",
-        iterations=len(rows),
+        iterations=completed_iterations,
         max_iterations=max_iterations,
         final_residual=final_residual,
         final_objective=objective[-1],

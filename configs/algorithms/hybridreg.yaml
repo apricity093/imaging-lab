@@ -1,0 +1,14 @@
+schema_version: 1
+name: hybridreg
+parameters:
+  num_inference_steps: 200
+  sigma: 0.0001
+  loss_measurement_weight: 0.5
+  loss_noise_weight: 10000.0
+  lr: 0.099
+  beta: 0.9999
+  sirt_iterations: 100
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

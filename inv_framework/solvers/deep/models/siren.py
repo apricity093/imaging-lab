@@ -1,5 +1,4 @@
-"""solvers deep models siren implementation."""
-from __future__ import annotations
+"""SIREN: sinusoidal-activation coordinate MLP (Sitzmann et al., 2020)."""
 
 import math
 import torch

@@ -37,3 +37,16 @@
 - [公共基准](public_benchmarks.md)：MRI 与反卷积的数据来源、算法对应关系及复现命令。
 - [算法来源](source_references.md)：论文、参考实现及本项目的实现差异。
 - [验证说明](validation.md)：数值与接口测试入口、验收记录、结果解释和已知限制。
+
+## CT 深度重建
+
+DIP、INR、DPS、扩散重建、mean-flow 与 LoRA 的公共任务、模型资源、尺度和预算见 [CT 深度先验](ct/deep_priors.md)。Budgeted DPS 的显式子集映射与交付范围同时记录。
+
+- [NaSn 独立应用](ct/nasn.md)
+
+## 工业、模型与安装资源
+
+- [工业几何与来源映射](ct/industrial.md)及[八类 toy 数据](../examples/ct_data/README.md)。
+- [请求模板与独立安装](ct/resources.md)覆盖工业、像素扩散、潜空间和 NaSn。
+- [扩散方法公式与来源验证](ct/diffusion_methods.md)。
+- [Harness 调用契约](ct/harness.md)。

@@ -22,6 +22,10 @@ def _resolve_paths(config, base):
         elif key not in {'geometry', 'measurement', 'data_range'}:
             reference(value)
     reference((config.get('evaluation') or {}).get('reference'))
+    for key in ('weights', 'model_config'):
+        value = config.get('params', {}).get(key)
+        if value:
+            config['params'][key] = str((base / value).resolve())
     checkpoint = config.get('params', {}).get('checkpoint')
     if checkpoint:
         config['params']['checkpoint'] = str((base / checkpoint).resolve())
@@ -77,7 +81,7 @@ def _execute(config, *, params=None):
                 raise ValueError("CT evaluation reference must be finite, real and match reconstruction")
             if not np.isfinite(data_range) or data_range <= 0:
                 raise ValueError("evaluation.data_range must be positive")
-            dimension = 3 if inputs['geometry']['type'] == 'cone_3d' else 2
+            dimension = 3 if inputs['geometry']['type'] in {'cone_3d', 'parallel_3d'} else 2
             result.metrics.update(ct_image_metrics(image, reference, data_range, dimension))
             result.diagnostics['evaluation'] = dict(reference_provided=True,
                 stage='post_reconstruction', data_range=data_range,

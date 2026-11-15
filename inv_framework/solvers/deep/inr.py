@@ -1,9 +1,13 @@
-"""solvers deep inr implementation."""
-from __future__ import annotations
+"""Implicit Neural Representation (INR) solver.
+
+Parametrise x as a coordinate-MLP f_theta(coord). Optimise theta so that
+A f_theta matches y. Defaults to SIREN.
+"""
 
 from typing import Callable, Optional
 import torch
 import torch.nn as nn
+
 from inv_framework.core.operator import ForwardOperator
 from inv_framework.solvers.deep.models.siren import SIREN
 from inv_framework.solvers.base import InverseProblemSolver
@@ -28,6 +32,7 @@ class INRSolver(InverseProblemSolver):
               measurement: torch.Tensor,
               operator: ForwardOperator,
               **kwargs) -> torch.Tensor:
+        self.network_evaluations = 0
         device = measurement.device
         B = measurement.shape[0]
         C, H, W = operator.domain_shape
@@ -38,6 +43,13 @@ class INRSolver(InverseProblemSolver):
             indexing='ij')
         coords = torch.stack([xs, ys], dim=-1).reshape(-1, 2)  # (H*W, 2)
 
+        # One network per measurement: a shared network would be fitted to
+        # the batch average and return the same image for every sample.
+        return torch.cat([self._fit(measurement[i:i + 1], operator, coords,
+                                    C, H, W) for i in range(B)])
+
+    def _fit(self, measurement, operator, coords, C, H, W):
+        device = measurement.device
         if self.model_factory is None:
             model = SIREN(in_features=2, out_features=C,
                           hidden_features=self.hidden_features,
@@ -48,8 +60,8 @@ class INRSolver(InverseProblemSolver):
         optim = torch.optim.Adam(model.parameters(), lr=self.lr)
 
         def render() -> torch.Tensor:
-            out = model(coords).view(H, W, C).permute(2, 0, 1).unsqueeze(0)
-            return out.expand(B, -1, -1, -1)
+            self.network_evaluations += 1
+            return model(coords).view(H, W, C).permute(2, 0, 1).unsqueeze(0)
 
         for it in range(self.num_iterations):
             optim.zero_grad()

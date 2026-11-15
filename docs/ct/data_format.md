@@ -91,3 +91,16 @@ representation=real，units/scale 表示原生模型尺度。落盘为 reconstru
 外部输入无 evaluation.reference 时不计算参考图像指标，仍可有投影残差。参考仅在重建后读取；
 catalog 路径保留可选真值评价。3D RMSE/PSNR 覆盖体积，SSIM 平均轴向切片，正交切片接口仍保留。
 FBP iterations=0、converged=false、stopping_reason=direct_reconstruction_valid；success 表示有效完成。
+
+
+工业 CT 几何、来源版本、经典方法参数映射及资源约定见 [工业 CT 整合契约](industrial.md)。
+
+## CT 深度重建
+
+DIP、INR、DPS、扩散重建、mean-flow 与 LoRA 的公共任务、模型资源、尺度和预算见 [CT 深度先验](deep_priors.md)。Budgeted DPS 的显式子集映射与交付范围同时记录。
+
+## 工业与模型数据布局
+
+二维图像为 (B,C,H,W)，观测为 (B,C,V,U)，扇束限定单通道方形图像。三维体积为 (B,Z,Y,X)，观测为 (B,R,V,U)，体积可为非立方体。domain_shape/range_shape 均省略 batch。距离、体素与 detector pitch 使用一致物理单位，det_offset_u 为探测器像素。detector_mask 是显式列掩膜。三维 Y 按世界坐标降序排列，解析 ASTRA 边界执行相应轴转换。
+
+深度公共任务为 float32 二维数据，x_phys=s×x_model+b，y_model=(y_phys−A(b×1))/s，其中 s=image_scale>0、b=image_offset。参考与公开重建保持物理尺度。NaSn 预处理后为 (B,1,900,2048)，center 和410有效列须匹配标定与补零。完整约定见 [工业几何](industrial.md)、[深度尺度](deep_priors.md)、[NaSn](nasn.md)与[请求模板](resources.md)。

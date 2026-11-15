@@ -60,6 +60,13 @@ class QuadraticSolver:
         p={**self.parameters,**kwargs}
         fidelity=p.pop('fidelity',None) or self.fidelity
         q=fidelity.weights if fidelity is not None else torch.ones_like(measurement.real)
+        if self.algorithm == 'cg' and p.get('lam_rel') is not None:
+            from inv_framework.core.norms import power_norm
+            reference = prepare_initial_image(measurement, operator, x_init)
+            estimate = power_norm(operator, reference)
+            p['strength'] = p['lam_rel'] * estimate['value']
+            p['operator_norm_squared'] = estimate['value']
+            p['regularizer'] = 'tikhonov'
         strength=p.get('strength',0.);reg=p.get('regularizer','none')
         if p.get('damping',0):strength=p['damping']**2;reg='tikhonov'
         b=AugmentedQuadratic(operator,measurement,q,reg,strength,p.get('boundary','neumann'))
@@ -78,10 +85,25 @@ class QuadraticSolver:
         recorder=IterationRecorder(control,measurement,operator,algorithm=self.algorithm);recorder.set_initial(x)
         monitor=ConsecutiveStoppingMonitor(control)
         status='max_iterations';reason='maximum_iterations_reached';actual=0;step=None;bound=None
+        step_basis = None
+        step_norm_squared = None
         if self.algorithm=='landweber':
             bound=b.bound(x);step=p.get('step_size')
             if step is not None and bound>0 and step*bound>=2:raise ValueError('step_size requires alpha * augmented_squared_norm_bound < 2; value was not clipped')
-            if step is None:step=1/bound if bound else 1.
+            if step is None:
+                if reg == 'none' and bool(torch.all(q == 1)):
+                    from inv_framework.solvers._iteration import _estimate_operator_norm_squared
+                    estimate = _estimate_operator_norm_squared(operator, measurement, iterations=12)
+                    step = .9 / estimate if estimate else 1.
+                    step_basis = 'power_iteration_estimate'
+                    step_norm_squared = estimate
+                else:
+                    step = 1. / bound if bound else 1.
+                    step_basis = 'upper_bound'
+                    step_norm_squared = bound
+            else:
+                step_basis = 'explicit'
+            p['step_size'] = step
         def checkpoint(k,v,previous, *, initial=False):
             nonlocal status,reason,actual
             actual=k;r=b.forward(v)-rhs;g=b.adjoint(r);nr=norm(g)/scale
@@ -162,4 +184,7 @@ class QuadraticSolver:
                 data_residual=norm(residual),weighted_data_residual=norm(b.sqrt_q*residual),
                 objective_definition='0.5 sum Q |Ax-y|^2 + 0.5 lambda ||Lx||^2',
                 weights_definition='nonnegative diagonal Q; no correlated covariance',regularizer_definition=dict(name=reg,strength=strength,boundary=p.get('boundary','neumann'),spacing=[1.,1.],spatial_axes=[-2,-1],complex='modulus squared, Hermitian adjoint'),
-                step_size=step,augmented_squared_norm_bound=bound,step_basis='upper_bound' if bound is not None else None))
+                step_size=step,augmented_squared_norm_bound=bound,step_basis=step_basis,
+                step_norm_squared=step_norm_squared,
+                step_safety_factor=.9 if step_basis=='power_iteration_estimate' and step_norm_squared else None,
+                step_estimator_iterations=12 if step_basis=='power_iteration_estimate' else None))

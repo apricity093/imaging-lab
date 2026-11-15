@@ -1,0 +1,42 @@
+# Replace observation with matching physical line integrals. Batch axis is required.
+modality: ct
+algorithm: sirt
+backend: astra
+device: cuda
+inputs:
+  observation:
+    path: data/parallel_3d_observation.npy
+model:
+  geometry:
+    type: parallel_3d
+    domain_shape:
+    - 8
+    - 16
+    - 16
+    range_shape:
+    - 8
+    - 12
+    - 20
+    angles_rad:
+    - 0.0
+    - 0.2617993877991494
+    - 0.5235987755982988
+    - 0.7853981633974483
+    - 1.0471975511965976
+    - 1.308996938995747
+    - 1.5707963267948966
+    - 1.832595714594046
+    - 2.0943951023931953
+    - 2.356194490192345
+    - 2.617993877991494
+    - 2.8797932657906435
+    voxel_size: 1.0
+    det_pixel:
+    - 1.5
+    - 1.5
+    det_offset_u: 0.0
+  measurement:
+    kind: line_integral
+    observation_model: line_integral
+params:
+  num_iterations: 2

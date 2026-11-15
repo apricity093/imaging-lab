@@ -7,7 +7,7 @@
 - **所属任务**：CT。
 - **方法类型**：非学习类，无需训练权重。
 - **适用范围**：要求受支持的 cone 几何、等边体素、ASTRA CUDA 与 PyTorch CUDA。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/ct/backends](../../inv_framework/ct/backends)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/ct/backends](../../inv_framework/ct/backends)。
 
 ### 领域入口与目标
 
@@ -74,3 +74,9 @@ invct run fdk --case cone_3d/spheres_astra_12 --config configs/algorithms/fdk.ya
 filter_type与short_scan须匹配扫描范围；voxel_supersampling为正整数。
 
 目标与数值操作见[共享数学说明](../shared_mathematics.md)，任务相关选参见[参数说明](../parameter_search.md)。
+
+## 工业 CT 数学与入口映射
+
+FDK 对圆轨迹锥束数据进行距离加权、逐行斜坡滤波与锥束反投影。要求最终体素各向同性，支持非立方体体积。来源 fbp 卡片的锥束案例归属本入口，具体距离与 detector pitch 见工业手册。
+
+几何、来源与限制见 [工业 CT](../ct/industrial.md)，两侧调用见 [Harness](../ct/harness.md)。

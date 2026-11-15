@@ -40,3 +40,11 @@ measurement. It is not an observation, initialization or calibration input.
 
 **Experiment**: One explicitly specified reconstruction, calibration or blind
 estimation task. Selection of subsequent experiments belongs to its caller.
+
+## CT 深度重建
+
+DIP、INR、DPS、扩散重建、mean-flow 与 LoRA 的公共任务、模型资源、尺度和预算见 [CT 深度先验](ct/deep_priors.md)。Budgeted DPS 的显式子集映射与交付范围同时记录。
+
+## 工业 CT 与调用方
+
+ct/backends 管理 Torch、ASTRA、LEAP、NaSn 数值投影和惰性 CUDA 编译。ct/api.py 导出公共 CT 请求与执行契约，ct/deep.py 连接本地模型资源和深度求解器。applications/nasn_ct 管理扫描预处理、训练、EMA 导出及重建编排。上层 harness 的发现、参数、资源暂存和安装绑定由其 backends 与安装模块负责，配套补丁与固定基准见 [Harness](ct/harness.md)。

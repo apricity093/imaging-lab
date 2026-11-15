@@ -7,7 +7,7 @@
 - **所属任务**：MRI。
 - **方法类型**：非学习类，无需训练权重。
 - **适用范围**：这是校准任务，输出灵敏度及特征值；重建应另发显式请求。
-- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/mri/calibration.py](../../inv_framework/mri/calibration.py)。
+- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/mri/calibration.py](../../inv_framework/mri/calibration.py)。
 
 ### 领域入口与目标
 

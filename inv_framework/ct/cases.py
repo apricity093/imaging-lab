@@ -189,6 +189,8 @@ def restrict_ct_case(
     if "angles_rad" in geometry:
         angles = list(geometry["angles_rad"])
         geometry["angles_rad"] = [angles[index] for index in indices]
+    if "vectors" in geometry:
+        geometry["vectors"] = [geometry["vectors"][index] for index in indices]
     range_shape = list(geometry.get("range_shape", ()))
     if len(range_shape) >= 2:
         range_shape[-2] = len(indices)

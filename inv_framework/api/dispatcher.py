@@ -7,7 +7,7 @@ import torch
 from inv_framework.api import execution
 from inv_framework.ct.cases import list_ct_cases
 from inv_framework.ct.registry import ALGORITHM_ALIASES, regularizer_records
-from .schema import CTTaskRequest, CTTaskResult, normalize_request, load_request_case
+from .schema import CTTaskRequest, CTTaskResult, normalize_request, load_request_case, request_device
 
 
 def list_capabilities(*, context=None):
@@ -17,10 +17,13 @@ def list_capabilities(*, context=None):
         "torch": {"implemented": True, "dependency_installed": True, "runnable": True,
                   "geometries": ["parallel_2d"], "device": "cpu/cuda", "cuda_available": None},
         "astra": {"implemented": True, "dependency_installed": astra_installed,
-                  "runnable": None if astra_installed else False, "geometries": ["parallel_2d", "cone_3d"], "cuda_available": None, "device": "cpu/cuda"},
+                  "runnable": None if astra_installed else False, "geometries": ["parallel_2d", "fan_2d", "parallel_3d", "cone_3d"], "cuda_available": None, "device": "cpu/cuda"},
         "leap": {"implemented": True, "dependency_installed": importlib.util.find_spec("leapctype") is not None,
                  "runnable": importlib.util.find_spec("leapctype") is not None, "geometries": ["parallel_2d"], "reason": "Requires LLNL LEAP"},
     }
+    backends['nasn'] = dict(implemented=True, dependency_installed=True,
+        runnable=None, geometries=['parallel_2d'], device='cuda',
+        reason='Requires CUDA toolkit and a working C++/CUDA extension compiler')
     algorithms = execution.solver_records()
     for record in algorithms:
         name = record["name"]
@@ -31,17 +34,41 @@ def list_capabilities(*, context=None):
         record["entry_point"] = "inv_framework.ct.api.run_ct_task"
         _, defaults, _ = execution.load_algorithm_config(
             Path(__file__).resolve().parents[2] / "configs/algorithms" / f"{name}.yaml", name)
-        record["objective_definition"] = CT_OBJECTIVES[name]
+        record["objective_definition"] = CT_OBJECTIVES.get(name, record["objective"])
         for parameter in record["parameter_specs"]:
             parameter["default"] = defaults[parameter["name"]]
+            declared_description = parameter["description"]
             parameter.update(parameter_description(parameter["name"], parameter["default"], parameter))
+            if record["family"] == "deep":
+                parameter["description"] = declared_description
+                if parameter["name"] == "scale":
+                    parameter["units"] = "guidance strength"
         resolve_recommendations("ct", record, context)
         backend = "astra" if name == "fdk" else "torch"
-        record.update(backends=["astra"] if name == "fdk" else ["torch", "astra", "leap"], default_parameters=defaults, implemented=record["build_reachable"],
+        record.update(backends=["astra"] if name == "fdk" else ["torch", "astra", "leap", "nasn"], default_parameters=defaults, implemented=record["build_reachable"],
                       execution_backend=backend, dependency_installed=backends[backend]["dependency_installed"],
                       runnable=None if backends[backend]["dependency_installed"] else False)
         from inv_framework.algorithm_catalog import describe_execution
         describe_execution("ct", record, context)
+        selected = (context or {}).get('backend', backend)
+        geometry = (context or {}).get('model', {}).get('geometry', {})
+        status = record['runtime_status']
+        record['execution_backend'] = selected
+        if selected in backends:
+            record['backend_capabilities'] = backends[selected]
+            if geometry.get('type') and geometry['type'] not in backends[selected]['geometries']:
+                status['reasons'].append(f"backend={selected} does not support {geometry['type']}")
+            if (geometry.get('type') in {'fan_2d', 'parallel_3d', 'cone_3d'} or selected == 'nasn') and (context or {}).get('device', '').startswith('cpu'):
+                status['reasons'].append('Selected geometry/backend requires CUDA')
+            if selected == 'nasn':
+                status['unresolved_conditions'].append(backends['nasn']['reason'])
+        if status['reasons']:
+            status['state'] = 'unavailable'
+            record['runnable'] = False
+        from inv_framework.solvers.deep.registry import ALGORITHMS
+        if name in ALGORITHMS:
+            from inv_framework.ct.deep import describe_execution as describe_deep
+            describe_deep(record, context)
     fidelities = {}
     for record in algorithms:
         for fidelity, requirements in record["metadata"].get("fidelity_requirements", {}).items():
@@ -49,9 +76,8 @@ def list_capabilities(*, context=None):
     return {"modality": "ct", "fidelities": fidelities, "algorithms": algorithms, "aliases": dict(ALGORITHM_ALIASES),
             "regularizers": regularizer_records(), "backends": backends,
             "default_backend": "torch",
-            "deep_priors": {"dip": "library only; no catalog task builder",
-                            "inr": "library only; no catalog task builder",
-                            "dps": "library only; requires a configured diffusion model"}}
+            "deep_priors": {"entry_point": "inv_framework.ct.api.run_ct_task",
+                            "resources": "docs/ct/deep_priors.md"}}
 
 
 def run_ct_task(request: CTTaskRequest | dict) -> CTTaskResult:
@@ -64,7 +90,7 @@ def run_ct_task(request: CTTaskRequest | dict) -> CTTaskResult:
         summary = name
         if "data_fidelity" in parameters or "regularizer" in parameters:
             summary += f"(fidelity={parameters.get('data_fidelity', 'l2')}, reg={parameters.get('regularizer', 'none')})"
-        device = request.device or ("cuda" if name == "fdk" else "cpu")
+        device = request_device(request, name)
         input_case = load_request_case(request, device) if request.inputs is not None else None
         if input_case is not None:
             geometry = input_case.geometry["type"]
@@ -77,7 +103,7 @@ def run_ct_task(request: CTTaskRequest | dict) -> CTTaskResult:
             raise execution.BackendUnavailable("LLNL LEAP is not installed")
         if geometry == "cone_3d" and request.backend != "astra":
             raise execution.ConfigError("cone_3d requires backend=astra")
-        device = request.device or ("cuda" if geometry == "cone_3d" else "cpu")
+        device = request.device or ("cuda" if geometry in {"cone_3d", "parallel_3d", "fan_2d"} or request.backend == "nasn" else "cpu")
         if request.backend == "astra":
             if importlib.util.find_spec("astra") is None:
                 raise execution.BackendUnavailable("astra-toolbox is not installed")
@@ -93,6 +119,9 @@ def run_ct_task(request: CTTaskRequest | dict) -> CTTaskResult:
         diagnostics = result.get("diagnostics", {})
         effective_parameters = dict(diagnostics.get("parameters", parameters))
         native = diagnostics.get("convergence", {}).get("metadata", {})
+        if name == 'cg' and parameters.get('lam_rel') is not None:
+            effective_parameters.update({key: value for key, value in native.get('parameters', {}).items()
+                                         if key in {'strength', 'lam_rel', 'operator_norm_squared'}})
         for key in ("step_size", "tau", "sigma", "rho"):
             if key in effective_parameters and native.get(key) is not None:
                 effective_parameters[key] = native[key]

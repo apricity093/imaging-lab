@@ -1,0 +1,12 @@
+schema_version: 1
+name: psld
+parameters:
+  num_inference_steps: 1000
+  gamma: 0.8
+  omega: 0.2
+  eta: 0.0
+  sirt_iterations: 100
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

@@ -1,6 +1,6 @@
 # 算法使用说明
 
-按数值方法组织。共22个算法／方法家族，映射46个公开任务入口；同一方法的领域适配、正则和保真项配置放在同一页。OS-SART、OSEM、RL-TV作为对应家族的更新变体保留说明。
+按数值方法组织，同一方法的领域适配、正则和保真项配置放在同一页。入口由实际注册信息生成。
 
 | 算法／家族 | 所属任务 | 公开入口 |
 | --- | --- | --- |
@@ -17,6 +17,21 @@
 | [PDHG](pdhg.md) | CT、MRI、反卷积 | CT: `pdhg`；CT: `constrained_pdhg`；MRI: `pdhg`；反卷积: `pdhg` |
 | [ASD-POCS-TV](asd_pocs_tv.md) | CT | CT: `asd_pocs_tv` |
 | [锥束滤波反投影 FDK](fdk.md) | CT | CT: `fdk` |
+| [DIP（Deep Image Prior）](dip.md) | CT | dip |
+| [INR（SIREN 隐式神经表示）](inr.md) | CT | inr |
+| [DPS（Diffusion Posterior Sampling）](dps.md) | CT | dps |
+| [MCG（Manifold-Constrained Gradient）](mcg.md) | CT | mcg |
+| [ΠGDM（Pseudoinverse-Guided Diffusion）](pgdm.md) | CT | pgdm |
+| [DDS（Decomposed Diffusion Sampler，DDIM 版）](ddim_dds.md) | CT | ddim_dds |
+| [DMPlug](dmplug.md) | CT | dmplug |
+| [RED-diff](reddiff.md) | CT | reddiff |
+| [HybridReg](hybridreg.md) | CT | hybridreg |
+| [PSLD（潜空间后验采样）](psld.md) | CT | psld |
+| [ReSample](resample.md) | CT | resample |
+| [DiffStateGrad](diffstategrad.md) | CT | diffstategrad |
+| [pMF-DDS（mean-flow 先验 + 每步 CG）](pmf_dds.md) | CT | pmf_dds |
+| [pMF-LoRA-DDS（在环 LoRA 自适应）](pmf_lora_dds.md) | CT | pmf_lora_dds |
+| [Budgeted DPS](budgeted_dps.md) | CT | budgeted_dps |
 | [ESPIRiT](espirit.md) | MRI | MRI: `espirit` |
 | [GRAPPA](grappa.md) | MRI | MRI: `grappa` |
 | [VarNet](varnet.md) | MRI | MRI: `varnet` |

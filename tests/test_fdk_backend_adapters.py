@@ -173,6 +173,18 @@ def test_astra_fdk_solver_options_batch_dtype_and_cleanup(fake_astra):
     assert not fake_astra.data3d.objects
 
 
+def test_astra_fdk_returns_public_y_axis(fake_astra, monkeypatch):
+    operator = ASTRAFDKOperator3D(_volume_geometry(), _cone_geometry())
+    native = torch.arange(8, dtype=torch.float32).reshape(2, 2, 2)
+    monkeypatch.setattr(operator, '_run_fdk_one', lambda projection, options: native.clone())
+    observation = torch.ones(2, *operator.range_shape, dtype=torch.float64)
+    result = operator.fdk(observation)
+    expected = native.flip(-2).double().expand(2, -1, -1, -1)
+    torch.testing.assert_close(result, expected)
+    assert result.device == observation.device
+    assert result.dtype == observation.dtype
+
+
 @pytest.mark.parametrize("failure", [RuntimeError("synthetic ASTRA failure"), KeyboardInterrupt("synthetic ASTRA failure")])
 def test_astra_fdk_filter_alias_validation_and_failure_cleanup(fake_astra, failure):
     operator = ASTRAFDKOperator3D(_volume_geometry(), _cone_geometry())

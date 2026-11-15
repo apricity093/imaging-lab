@@ -1,0 +1,12 @@
+schema_version: 1
+name: budgeted_dps
+parameters:
+  num_inference_steps: 200
+  scale: 1.0
+  eta: 0.0
+  schedule_actions: null
+  key_indices: null
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

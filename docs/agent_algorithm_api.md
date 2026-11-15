@@ -101,8 +101,8 @@ without an AttributeError traceback.
 
 `inv_framework.api` exports `CTTaskRequest`, `CTTaskResult`, `list_capabilities`,
 `validate_ct_request`, `run_ct_task`, `orthogonal_slices`, and `orthogonal_metrics`.
-The 17 algorithm IDs and their parameter descriptions come from one CT registry.
-DIP, INR and DPS remain library solvers under `solvers/deep`, outside this task API.
+The registered algorithm IDs and their parameter descriptions come from one CT registry.
+DIP, INR, DPS and migrated diffusion/mean-flow methods are CT task capabilities and also expose independent solvers under `solvers/deep`.
 
 ## Discovery and validation
 
@@ -236,7 +236,7 @@ an operator norm. Device/backend dependencies are checked at execution.
 | Field | Type and default | Meaning |
 | --- | --- | --- |
 | case_id | str, required | Catalog ID, or arbitrary label when inputs is supplied |
-| algorithm | str, required | One of the 17 discovered IDs |
+| algorithm | str, required | One of the discovered IDs |
 | backend | str, `torch` | `torch`, `astra`, `leap`; never silently substituted |
 | device | str or None, None | `cpu`, `cuda`, `cuda:N`; default CPU for 2D, CUDA for cone FDK |
 | data_root | str or None, None | Directory containing `catalog.json`; default `tests/data` |
@@ -378,3 +378,12 @@ Domain-specific tests are grouped under `tests/core`, `tests/ct`, `tests/mri`,
 The parent Agent repository owns adapters and request/result conversion only.
 
 Shared ADMM/PDHG/FISTA three-domain calls, five regularizer definitions and fixed-block joint ADMM: [composable solvers](composable_solvers.md). A runnable small example is `python examples/composition_quickstart.py --domain mri --algorithm admm --regularizer tv_haar` (also ct/deconvolution).
+
+
+工业 CT 几何、来源版本、经典方法参数映射及资源约定见 [工业 CT 整合契约](ct/industrial.md)。
+
+## CT 深度重建
+
+DIP、INR、DPS、扩散重建、mean-flow 与 LoRA 的公共任务、模型资源、尺度和预算见 [CT 深度先验](ct/deep_priors.md)。Budgeted DPS 的显式子集映射与交付范围同时记录。
+
+Harness 的发现、后端与几何暂存、本地模型、预算和结果消费见 [CT Harness 接入](ct/harness.md)。

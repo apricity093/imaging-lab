@@ -190,7 +190,7 @@ def test_request_only_dimension_none_remains_compatible() -> None:
     "shape",
     [(0, 0, 0), (-1, 1, 1), (True, 1, 1), (1.0, 1, 1), (1, 2)],
 )
-def test_fdk_requires_strict_positive_cubic_integer_shape(shape: object) -> None:
+def test_fdk_requires_strict_positive_integer_shape(shape: object) -> None:
     result = validate_parameter_values(
         "fdk",
         {},
@@ -203,7 +203,7 @@ def test_fdk_requires_strict_positive_cubic_integer_shape(shape: object) -> None
     assert "geometry_shape_invalid" in result.reason_codes
 
 
-def test_fdk_rejects_non_cubic_or_invalid_image_shape() -> None:
+def test_fdk_accepts_non_cubic_and_rejects_invalid_image_shape() -> None:
     non_cubic = validate_parameter_values(
         "fdk",
         {},
@@ -212,8 +212,7 @@ def test_fdk_rejects_non_cubic_or_invalid_image_shape() -> None:
         observation_domain="line_integral",
         domain_shape=(1, 2, 3),
     )
-    assert not non_cubic.valid
-    assert "cubic_volume_required" in non_cubic.reason_codes
+    assert non_cubic.valid
 
     invalid_image_shape = validate_parameter_values(
         "fdk",

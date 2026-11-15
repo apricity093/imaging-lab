@@ -14,6 +14,58 @@ def algorithm(caps, name):
     return next(r for r in caps['algorithms'] if r['name'] == name)
 
 
+@pytest.mark.parametrize('entry', [
+    'inv_framework.ct.deep', 'inv_framework.solvers.base',
+    'inv_framework.ct.registry', 'inv_framework.ct.api',
+])
+def test_public_imports_in_fresh_process(entry):
+    script = '''
+import importlib, sys
+importlib.import_module(sys.argv[1])
+from inv_framework.ct.deep import DeepCTSolver, model_conditions
+from inv_framework.solvers import *
+from inv_framework.ct import registry
+assert SOLVER_SPECS is registry.SOLVER_SPECS
+assert ParameterSpec is registry.ParameterSpec
+assert solver_records is registry.solver_records
+assert SOLVER_SPECS['psld'].name == 'psld'
+assert 'pmf_dds' in CANONICAL_ALGORITHM_IDS
+'''
+    subprocess.run([sys.executable, '-c', script, entry],
+                   cwd=Path(__file__).resolve().parents[1], check=True, capture_output=True, text=True)
+
+
+@pytest.mark.parametrize('name', ['psld', 'resample', 'diffstategrad'])
+@pytest.mark.parametrize('embedding_dimension', [1, None])
+@pytest.mark.parametrize('blocks,latent_grid,decoded_grid', [
+    ([8], 8, [8, 8]), ([8, 16, 16], [4, 8], [16, 32]),
+])
+def test_latent_declared_decoded_grid(tmp_path, name, blocks, latent_grid, decoded_grid, embedding_dimension):
+    from inv_framework.ct.deep import model_conditions
+    for folder in ('unet', 'vqvae', 'scheduler'):
+        (tmp_path / folder).mkdir()
+    (tmp_path / 'unet/config.json').write_text(json.dumps({'sample_size': latent_grid, 'in_channels': 1}))
+    (tmp_path / 'vqvae/config.json').write_text(json.dumps({
+        'in_channels': 1, 'vq_embed_dim': embedding_dimension, 'latent_channels': 1,
+        'block_out_channels': blocks,
+        'up_block_types': ['UpDecoderBlock2D'] * len(blocks)}))
+    (tmp_path / 'scheduler/scheduler_config.json').write_text('{"prediction_type": "epsilon"}')
+    for folder in ('unet', 'vqvae'):
+        (tmp_path / folder / 'diffusion_pytorch_model.safetensors').touch()
+    params = {'weights': str(tmp_path)}
+    geometry = {'type': 'parallel_2d', 'domain_shape': [1, *decoded_grid]}
+    assert model_conditions(name, params, geometry) == []
+    geometry['domain_shape'][-1] *= 2
+    reasons = model_conditions(name, params, geometry)
+    assert any('VQ decoded grid' in reason for reason in reasons)
+    record = algorithm(list_capabilities('ct', context={
+        'params': params, 'backend': 'torch', 'device': 'cpu',
+        'model': {'geometry': geometry, 'measurement': {'kind': 'line_integral'}},
+        'available_inputs': ['observation', 'geometry', 'measurement']}), name)
+    assert record['runnable'] is False
+    assert any('VQ decoded grid' in reason for reason in record['runtime_status']['reasons'])
+
+
 def test_aggregate_and_domain_queries():
     from inv_framework import list_capabilities as top_level
     from inv_framework.ct.api import list_capabilities as ct
@@ -71,7 +123,7 @@ def test_defaults_and_controls_match_registration():
                 assert controls['unified_entry']['stopping_policy'] == bool(mappings['stopping_policy'])
                 assert controls['unified_entry']['problem_constraints'] == bool(mappings['problem_constraints'])
                 assert set(v for v in mappings['stopping_policy'].values() if v) <= defaults.keys()
-            assert record['runtime_status']['state'] == 'pending' or not record['dependency_installed']
+            assert record['runtime_status']['state'] == 'pending' or record['runtime_status']['reasons']
             assert record['runnable'] is not True
     mri = caps['mri']
     assert algorithm(mri,'cg_sense')['controls']['native']['iteration_parameter'] == 'max_iter'

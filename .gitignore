@@ -42,6 +42,9 @@ docs\ct_integration_report.md
 artifacts/
 build/
 .pytest_cache/
+/outputs/
+/weights/
+*.safetensors
 
 # Authorized MRI data and derivatives remain local under their source agreement.
 /outputs/fastmri_local/

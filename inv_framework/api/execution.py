@@ -536,9 +536,36 @@ def require_astra_cuda(device):
     return astra
 
 
-def build_operator(case: Any, device: str | torch.device, backend="torch"):
+def build_operator(case, device, backend="torch"):
+    from inv_framework.ct.industrial import DetectorMaskedOperator
+    operator = _build_operator(case, device, backend)
+    if tuple(operator.range_shape) != tuple(case.geometry['range_shape']):
+        if hasattr(operator, 'close'):
+            operator.close()
+        raise ConfigError('operator range_shape does not match declared geometry')
+    mask = case.geometry.get('detector_mask')
+    if mask is not None:
+        mask = torch.as_tensor(mask, dtype=case.measurement.dtype, device=device)
+        if mask.ndim != 1 or mask.numel() != operator.range_shape[-1]:
+            raise ConfigError('detector_mask must match detector width')
+        operator = DetectorMaskedOperator(operator, mask)
+    return operator
+
+
+def _build_operator(case: Any, device: str | torch.device, backend="torch"):
     geometry_type = case.geometry.get("type")
     resolved = torch.device(device)
+    if backend == "nasn":
+        if geometry_type != "parallel_2d":
+            raise ConfigError("nasn requires parallel_2d geometry")
+        from inv_framework.ct.backends.nasn_cuda import TomoPyCUDARadon2D
+        return TomoPyCUDARadon2D(case.geometry["domain_shape"][-1], angles=case.geometry["angles_rad"], center=case.geometry.get("center"), device=str(resolved))
+    if geometry_type in {"fan_2d", "parallel_3d"} or (geometry_type == "cone_3d" and any(key in case.geometry for key in ("det_pixel", "voxel_size", "vectors", "window", "det_offset_u"))):
+        if backend != "astra":
+            raise ConfigError("industrial fan/3D geometry requires backend=astra")
+        from inv_framework.ct.industrial import build_industrial_operator
+        require_astra_cuda(resolved)
+        return build_industrial_operator(case.geometry, resolved)
     if geometry_type == "parallel_2d":
         domain = tuple(int(v) for v in case.geometry["domain_shape"])
         if len(domain) != 3 or domain[-1] != domain[-2]:
@@ -555,10 +582,10 @@ def build_operator(case: Any, device: str | torch.device, backend="torch"):
         from inv_framework.ct.backends import ASTRAFDKOperator3D
         astra = require_astra_cuda(resolved)
         domain = tuple(int(v) for v in case.geometry["domain_shape"])
-        if len(domain) != 3 or len(set(domain)) != 1:
-            raise ConfigError("ASTRA FDK requires a cubic 3D domain_shape.")
+        if len(domain) != 3:
+            raise ConfigError("ASTRA FDK requires a three-dimensional domain_shape.")
         angles = np.asarray(case.geometry["angles_rad"], dtype=np.float32)
-        volume_geometry = astra.create_vol_geom(*domain)
+        volume_geometry = astra.create_vol_geom(domain[1], domain[2], domain[0])
         projection_geometry = astra.create_proj_geom(
             "cone",
             float(case.geometry["detector_spacing_row"]),
@@ -657,6 +684,11 @@ SOLVER_BUILDERS: dict[str, Callable[..., Any]] = {
     "asd_pocs_tv": lambda **p: _build_constrained("asd_pocs_tv", **p),
     "fdk": FDKSolver,
 }
+from inv_framework.ct.deep import DeepCTSolver, outer_parameter
+from inv_framework.solvers.deep.registry import ALGORITHMS as DEEP_ALGORITHMS
+for _name in DEEP_ALGORITHMS:
+    SOLVER_BUILDERS[_name] = lambda _id=_name, **p: DeepCTSolver(_id, **p)
+
 BUILD_SOLVER_MAP = SOLVER_BUILDERS
 BUILD_ALGORITHM_IDS = tuple(SOLVER_BUILDERS)
 
@@ -1158,7 +1190,8 @@ def execute_case(
             raise InvalidParametersError(
                 f"invalid parameters for {name}: {'; '.join(validation.errors)}"
             )
-        requested_iterations = int(validation.parameters.get("num_iterations", 0) or 0)
+        requested_iterations = int(validation.parameters.get(
+            outer_parameter(name) if name in DEEP_ALGORITHMS else "num_iterations", 0) or 0)
         try:
             solver = build_solver(name, validation.parameters, case)
         except ConfigError as error:

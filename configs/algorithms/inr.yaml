@@ -1,0 +1,11 @@
+schema_version: 1
+name: inr
+parameters:
+  num_iterations: 2000
+  lr: 0.0001
+  hidden_features: 256
+  hidden_layers: 4
+  weights: null
+  seed: 0
+  image_scale: 1.0
+  image_offset: 0.0

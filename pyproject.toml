@@ -9,7 +9,7 @@ description = "Inverse-problem framework with CT reconstruction operators and so
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "LICENSES/*.txt"]
 dependencies = [
   "torch>=1.12",
   "numpy>=1.21",
@@ -23,9 +23,15 @@ dependencies = [
 dev = ["pytest>=7", "scipy"]
 mri = ["torchkbnufft==1.5.2"]
 benchmark-data = ["scikit-image==0.26.0", "phantominator==0.7.0"]
-diffusion = ["diffusers>=0.30"]
+diffusion = ["diffusers==0.32.2", "safetensors>=0.4", "huggingface_hub>=0.20"]
+
+nasn = ["torch>=2.1", "opencv-python-headless>=4.8", "safetensors>=0.4", "scikit-image>=0.21", "tifffile>=2023.7", "zstandard>=0.21", "ninja>=1.11"]
+nasn-train = ["lpips>=0.1.4", "pytorch-msssim>=1.0"]
 
 [project.scripts]
+inv-download-weights = "inv_framework.solvers.deep.download_weights:main"
+inv-nasn-ct = "inv_framework.applications.nasn_ct.cli:main"
+inv-nasn-ct-train = "inv_framework.applications.nasn_ct.training.train:entrypoint"
 invct = "inv_framework.api.cli:main"
 inv-run = "inv_framework.runner:main"
 
@@ -33,7 +39,10 @@ inv-run = "inv_framework.runner:main"
 include = ["inv_framework*", "configs*"]
 
 [tool.setuptools.package-data]
-configs = ["algorithms/*.yaml", "mri/algorithms/*.yaml", "deconvolution/algorithms/*.yaml", "ct/benchmarks/*.yaml", "mri/benchmarks/*.yaml", "deconvolution/benchmarks/*.yaml"]
+"inv_framework.applications.nasn_ct" = ["configs/*.yaml", "configs/*.json", "manifests/*.json"]
+"inv_framework.solvers.deep.models" = ["resources/*.json"]
+"inv_framework.ct.backends.radon_cuda" = ["*.cpp", "*.cu"]
+configs = ["algorithms/*.yaml", "mri/algorithms/*.yaml", "deconvolution/algorithms/*.yaml", "ct/benchmarks/*.yaml", "ct/*.yaml", "mri/benchmarks/*.yaml", "deconvolution/benchmarks/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,3 +1,4 @@
+"""Solver implementations and lazy CT registry exports."""
 from inv_framework.solvers.base import ConsecutiveStoppingMonitor, InverseProblemSolver, IterationRecord, IterationRecorder, SolveControl, SolveResult
 from inv_framework.solvers.analytic import FBPSolver, fbp
 from inv_framework.solvers.algebraic import SIRTSolver, LandweberSolver, sirt, landweber
@@ -46,9 +47,8 @@ __all__ += [
 ]
 
 from inv_framework.solvers.splitting import TikhonovSolver, TVFISTASolver, tikhonov, tv_fista
-from inv_framework.ct.registry import ALGORITHM_ALIASES, ALGORITHM_ALIAS_MAP, CANONICAL_ALGORITHM_IDS, CANONICAL_CT_ALGORITHM_IDS, COMPATIBILITY_REASON_CODES, CT_COMPATIBILITY_REASON_CODES, CTAlgorithmSpec, CompatibilityRule, EMISSION_OBSERVATION_MODELS, NON_APPLICABLE_PARAMETER_CATEGORIES, NON_APPLICABLE_PARAMETERS, PARAMETER_APPLICABILITY, ParameterSpec, ParameterValidationResult, REGISTRY_SCHEMA_VERSION, REGULARIZER_SPECS, RegularizerSpec, SOLVER_SPECS, TRANSMISSION_OBSERVATION_MODELS, compatibility_diagnostics, registry_contract, regularizer_records, solver_records, validate_registry, validate_compatibility, validate_compatibility_details, validate_parameter_values
 
-__all__ += [
+_REGISTRY_EXPORTS = [
     "REGISTRY_SCHEMA_VERSION",
     "CANONICAL_ALGORITHM_IDS",
     "CANONICAL_CT_ALGORITHM_IDS",
@@ -61,10 +61,6 @@ __all__ += [
     "NON_APPLICABLE_PARAMETERS",
     "EMISSION_OBSERVATION_MODELS",
     "TRANSMISSION_OBSERVATION_MODELS",
-    "TikhonovSolver",
-    "TVFISTASolver",
-    "tikhonov",
-    "tv_fista",
     "ParameterSpec",
     "ParameterValidationResult",
     "RegularizerSpec",
@@ -81,6 +77,8 @@ __all__ += [
     "validate_compatibility_details",
     "validate_parameter_values",
 ]
+
+__all__ += _REGISTRY_EXPORTS + ["TikhonovSolver", "TVFISTASolver", "tikhonov", "tv_fista"]
 
 # Optional detailed execution entry points.  Imports are kept at the end so
 # the legacy solver modules can still import the base contract without a
@@ -114,3 +112,10 @@ __all__ += ['ADMMSolver', 'PDHGSolver', 'admm', 'pdhg']
 
 from inv_framework.solvers.splitting import ConstrainedTVSolver, constrained_pdhg, asd_pocs_tv
 __all__ += ['ConstrainedTVSolver', 'constrained_pdhg', 'asd_pocs_tv']
+
+
+def __getattr__(name):
+    if name in _REGISTRY_EXPORTS:
+        from inv_framework.ct import registry
+        return getattr(registry, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

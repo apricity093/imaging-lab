@@ -24,9 +24,9 @@ METHODS = {
  'cgls': ('CGLS','以最小二乘共轭方向求解实数或复数二次目标。','solvers/quadratic.py','恒等与梯度二次正则通过增广实现；公共共享路径为无约束目标。'),
  'lsqr': ('LSQR','使用 Golub–Kahan 双对角化求解最小二乘。','solvers/quadratic.py','damping 的平方进入恒等正则，不能与显式正则重复计入。'),
  'cg': ('共轭梯度 CG','求解 Hermitian 正定正规系统。','core/krylov.py','cg_sense 是 SENSE 入口；CT tikhonov 是采用 CG 的二次正则入口。Tikhonov 为目标项，不另计算法。独立 cg 要求正权重恒等正则。'),
- 'fbp': ('滤波反投影 FBP','对投影滤波后反投影得到图像。','solvers/analytic.py','用于二维平行束线积分；锥束体重建采用 FDK。'),
+ 'fbp': ('滤波反投影 FBP','对投影滤波后反投影得到图像。','solvers/analytic.py','用于二维平行束、二维扇束及三维平行束线积分；锥束体重建采用 FDK。'),
  'fdk': ('锥束滤波反投影 FDK','调用 ASTRA FDK_CUDA 重建圆轨迹锥束数据。','ct/backends','要求受支持的 cone 几何、等边体素、ASTRA CUDA 与 PyTorch CUDA。'),
- 'sirt': ('SIRT','用行列归一化的同时残差更新执行代数重建。','solvers/algebraic.py','二维平行束 CT，可设置图像上下界。'),
+ 'sirt': ('SIRT','用行列归一化的同时残差更新执行代数重建。','solvers/algebraic.py','支持二维平行束、二维扇束、三维平行束及三维锥束 CT，可设置图像上下界。'),
  'sart': ('SART','按角度块执行归一化代数更新。','solvers/algebraic.py','OS-SART 作为有序子集变体合并说明；子集与块大小须符合实际角度划分。'),
  'mlem': ('最大似然 EM（MLEM）','以非负乘法更新求解发射 Poisson 计数重建。','solvers/statistical.py','OSEM 是有序子集变体。发射计数与 X-ray 透射计数是不同模型，不对透射数据套用该更新。'),
  'asd_pocs_tv': ('ASD-POCS-TV','交替执行观测可行性更新和 TV 下降。','solvers/splitting.py','这是独立的投影与下降更新方法；需要明确的残差球半径及来源，不是 ADMM 的 TV 配置。'),
@@ -93,15 +93,22 @@ def render(only=None):
             groups[Path(algorithm_documentation(record['name'])).stem].append((domain,record))
     selected=None if only is None else {Path(algorithm_documentation(n)).stem for _,n in only}
     destination=ROOT/'docs/algorithms';destination.mkdir(exist_ok=True)
-    index=['# 算法使用说明','','按数值方法组织。共22个算法／方法家族，映射46个公开任务入口；同一方法的领域适配、正则和保真项配置放在同一页。OS-SART、OSEM、RL-TV作为对应家族的更新变体保留说明。','','| 算法／家族 | 所属任务 | 公开入口 |','| --- | --- | --- |']
+    index=['# 算法使用说明','','按数值方法组织，同一方法的领域适配、正则和保真项配置放在同一页。入口由实际注册信息生成。','','| 算法／家族 | 所属任务 | 公开入口 |','| --- | --- | --- |']
+    from inv_framework.solvers.deep.registry import ALGORITHMS as deep_algorithms
+    from tools.render_deep_docs import render_deep, retained_body
     for family,entries in groups.items():
+        if family in deep_algorithms:
+            index.append(f"| [{deep_algorithms[family].title}]({family}.md) | CT | {family} |")
+            if selected is None or family in selected:
+                render_deep(family, entries[0][1], destination)
+            continue
         title,purpose,module,scope=METHODS[family]
         tasks='、'.join(dict.fromkeys(DOMAINS[d] for d,_ in entries))
         ids='；'.join(f"{DOMAINS[d]}: `{r['name']}`" for d,r in entries)
         index.append(f'| [{title}]({family}.md) | {tasks} | {ids} |')
         if selected is not None and family not in selected:continue
         config,command,data,expected=demo(family)
-        lines=[f'# {title}','','## 一、算法身份','',f'- **名称**：{title}。',f'- **一句话简介**：{purpose}',f'- **所属任务**：{tasks}。',f'- **方法类型**：{"学习类，使用训练权重" if family=="varnet" else "非学习类，无需训练权重"}。',f'- **适用范围**：{scope}',f'- **代码来源**：[apricity093/agent_CT](https://github.com/apricity093/agent_CT)，包版本`0.1.0`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/{module}](../../inv_framework/{module})。','', '### 领域入口与目标','', '| 领域／入口 | 适用范围与实际目标 |','| --- | --- |']
+        lines=[f'# {title}','','## 一、算法身份','',f'- **名称**：{title}。',f'- **一句话简介**：{purpose}',f'- **所属任务**：{tasks}。',f'- **方法类型**：{"学习类，使用训练权重" if family=="varnet" else "非学习类，无需训练权重"}。',f'- **适用范围**：{scope}',f'- **代码来源**：[apricity093/imaging-lab](https://github.com/apricity093/imaging-lab)，包版本`0.1.1`，使用随本说明发布的源码（[版本声明](../../pyproject.toml)）。主要实现：[inv_framework/{module}](../../inv_framework/{module})。','', '### 领域入口与目标','', '| 领域／入口 | 适用范围与实际目标 |','| --- | --- |']
         for d,r in entries:
             objective=r.get('objective_definition',r.get('objective',''))
             description=(r.get('applicability',r.get('description',''))+' '+str(objective)).replace('|','\\|')
@@ -146,7 +153,8 @@ def render(only=None):
             'blind_l0':'核支持为图像内奇数尺寸且至少3；阈值逐层减半，内部预算随层数增加。',
         }.get(family,'权重对应未按像素数平均的目标。Haar层数须适配尺寸；rho为正且与正则权重独立；步长和CG精度依据实际算子与系统。MRI复数变量不接受实数盒约束，具体组合按入口条件执行。')
         lines+=['','### 耦合条件','',coupling,'','目标与数值操作见[共享数学说明](../shared_mathematics.md)，任务相关选参见[参数说明](../parameter_search.md)。']
-        (destination/f'{family}.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+        lines += retained_body(family)
+        (destination/f'{family}.md').write_text('\n'.join(lines).rstrip()+'\n',encoding='utf-8')
     if selected is None:
         (destination/'README.md').write_text('\n'.join(index)+'\n',encoding='utf-8')
         for entries in groups.values():
